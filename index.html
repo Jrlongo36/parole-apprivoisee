@@ -3,74 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Parole Apprivoisée</title>
+    <title>La Parole Apprivoisée PRO</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
+    <nav id="status-bar">
+        <div id="user-info"><span id="user-name">Invité</span> | <span id="star-count">⭐ 0</span></div>
+        <div class="progress-container"><div id="progress-bar-inner"></div></div>
+    </nav>
 
-    <section id="scr-accueil" class="active">
-        <h1>La Parole Apprivoisée</h1>
-        <p>Apprends à lire avec la Bible</p>
-        <div id="loading-zone">
-            <div class="spinner"></div>
-            <p>Chargement de la Bible...</p>
-        </div>
-        <div id="mode-zone" class="hidden">
-            <button onclick="choisirMode('enfant')">🧒 Enfant</button>
-            <button onclick="choisirMode('adulte')">📖 Adulte</button>
-        </div>
-    </section>
-
-    <section id="scr-livres" class="hidden">
-        <h2>📚 Choisis un Livre</h2>
-        <div id="liste-livres" class="grid-container"></div>
-    </section>
-
-    <section id="scr-chapitres" class="hidden">
-        <button class="btn-back" onclick="nav('scr-livres')">← Livres</button>
-        <h2 id="titre-chapitres">Chapitres</h2>
-        <div id="liste-chapitres" class="grid-container"></div>
-    </section>
-
-    <section id="scr-lecture" class="hidden">
-        <button class="btn-back" onclick="retourAuxChapitres()">← Chapitres</button>
-        
-        <div class="player-header">
-            <h3 id="reference-lecture">Genèse 1:1</h3>
-            <div class="tts-controls">
-                <label>🔊 Vitesse:</label>
-                <input type="range" id="speed" min="0.5" max="1.2" step="0.1" value="0.8">
-                <span id="speed-val">0.8</span>
+    <main id="app">
+        <section id="scr-accueil" class="active">
+            <div class="card">
+                <h1>Tableau de Bord</h1>
+                <button class="btn-add" onclick="creerEleve()">+ Nouvel Élève</button>
+                <div id="liste-eleves"></div>
             </div>
-        </div>
+        </section>
 
-        <div id="exercice-zone">
-            <p id="texte-verset" class="verset-text"></p>
-            
-            <div id="step-1" class="step active">
-                <button class="btn-main" onclick="lireVerset()">🔊 Écouter</button>
+        <section id="scr-livres" class="hidden">
+            <h2>📜 Livres</h2>
+            <div id="list-livres" class="grid-menu"></div>
+        </section>
+
+        <section id="scr-chapitres" class="hidden">
+            <button class="btn-back" onclick="openScreen('scr-livres')">← Retour</button>
+            <h2 id="titre-livre"></h2>
+            <div id="list-chapitres" class="grid-num"></div>
+        </section>
+
+        <section id="scr-lecture" class="hidden">
+            <div class="card">
+                <h3 id="ref-label"></h3>
+                <div id="text-display" class="verset-box"></div>
+                
+                <div id="step-1" class="step">
+                    <button class="btn-main" onclick="lireVerset()">🔊 ÉCOUTER ET SUIVRE</button>
+                </div>
+
+                <div id="step-2" class="step hidden">
+                    <p>Touche la syllabe manquante :</p>
+                    <h3 id="word-hint"></h3>
+                    <div id="syllabes-choices" class="syllabes-grid"></div>
+                </div>
+
+                <div id="step-3" class="step hidden">
+                    <h3>✨ Bravo ! +20 ⭐</h3>
+                    <button class="btn-main" onclick="prochainVerset()">SUIVANT ▶</button>
+                </div>
             </div>
-
-            <div id="step-2" class="step hidden">
-                <p class="instruction">Touche la bonne syllabe</p>
-                <div id="mot-a-trou"></div>
-                <div id="syllabes-choix" class="syllabes-grid"></div>
-            </div>
-
-            <div id="step-3" class="step hidden">
-                <h3>🎉 Bravo !</h3>
-                <button class="btn-main" onclick="versetSuivant()">Verset suivant ▶</button>
-            </div>
-        </div>
-    </section>
-
+        </section>
+    </main>
     <script src="script.js"></script>
-    <script>
-        // Enregistrement du Service Worker pour le hors-ligne
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
 </body>
 </html>
