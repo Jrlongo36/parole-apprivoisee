@@ -1,1994 +1,1893 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#534AB7">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
 <title>La Parole Apprivoisée</title>
-<link rel="manifest" href="manifest.json">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="manifest" href="#" id="manifestLink"/>
+<meta name="theme-color" content="#534AB7"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
-/* ═══════════════════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; -webkit-text-size-adjust: 100%; }
-body {
-  min-height: 100%;
-  font-family: 'Lora', serif;
-  background: #F5F3FF;
-  color: #1a1a2e;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ═══════════════════════════════════════════════════
-   CSS VARIABLES
-═══════════════════════════════════════════════════ */
 :root {
   --violet: #534AB7;
-  --violet-dark: #3C3489;
-  --violet-light: #7B74D4;
-  --violet-pale: #EEEDFE;
-  --violet-mid: #AFA9EC;
-  --vert: #1D9E75;
-  --vert-pale: #E1F5EE;
-  --orange: #E8851A;
-  --orange-pale: #FFF3E0;
-  --rouge: #E24B4A;
-  --or: #F5C518;
-  --blanc: #FFFFFF;
-  --gris-clair: #F5F3FF;
-  --gris-text: #5A5870;
-  --shadow-card: 0 4px 24px rgba(83,74,183,0.13), 0 1px 4px rgba(83,74,183,0.08);
-  --shadow-btn: 0 4px 16px rgba(83,74,183,0.30);
-  --radius-card: 20px;
-  --radius-btn: 16px;
-  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --violet-dark: #3d3690;
+  --violet-light: #7a72d4;
+  --vert: #2ecc71;
+  --orange: #f39c12;
+  --rouge: #e74c3c;
+  --blanc: #ffffff;
+  --gris: #f4f3ff;
+  --texte: #1a1a2e;
+  --or: #FFD700;
 }
 
-/* ═══════════════════════════════════════════════════
-   BARRE DE PROGRESSION HORS-LIGNE
-═══════════════════════════════════════════════════ */
-#offline-bar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-  background: var(--violet);
-  color: white;
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
   font-family: 'Lora', serif;
-  font-size: 14px;
-  padding: 10px 16px 8px;
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 2px 12px rgba(83,74,183,0.4);
-}
-#offline-bar.visible { display: flex; }
-#offline-bar-text { font-weight: 600; }
-#offline-bar-sub { font-size: 12px; opacity: 0.85; }
-#offline-progress-track {
-  width: 100%; height: 6px;
-  background: rgba(255,255,255,0.25);
-  border-radius: 3px; overflow: hidden;
-}
-#offline-progress-fill {
-  height: 100%; width: 0%;
-  background: var(--or);
-  border-radius: 3px;
-  transition: width 0.4s ease;
+  background: var(--gris);
+  color: var(--texte);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* ═══════════════════════════════════════════════════
-   ÉCRANS (SCREENS)
-═══════════════════════════════════════════════════ */
+/* ===== ÉCRANS ===== */
 .screen {
   display: none;
   min-height: 100vh;
-  padding: 0;
-  animation: fadeIn 0.35s ease forwards;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
 }
 .screen.active { display: flex; flex-direction: column; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ═══════════════════════════════════════════════════
-   ÉCRAN ACCUEIL
-═══════════════════════════════════════════════════ */
-#screen-home {
-  background: linear-gradient(160deg, #3C3489 0%, #534AB7 45%, #7B74D4 100%);
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 40px 24px;
-}
-.home-logo {
-  width: 110px; height: 110px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 24px;
-  border: 3px solid rgba(255,255,255,0.35);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-}
-.home-logo svg { width: 60px; height: 60px; }
-.home-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px; font-weight: 700;
-  color: white;
-  line-height: 1.15;
-  margin-bottom: 8px;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-.home-subtitle {
-  font-size: 15px;
-  color: rgba(255,255,255,0.8);
-  margin-bottom: 48px;
-  line-height: 1.5;
-}
-.mode-cards {
-  display: flex; flex-direction: column; gap: 16px;
-  width: 100%; max-width: 340px;
-}
-.mode-card {
-  background: white;
-  border-radius: var(--radius-card);
-  padding: 22px 24px;
-  display: flex; align-items: center; gap: 18px;
-  cursor: pointer;
-  box-shadow: var(--shadow-card);
-  transition: var(--transition);
-  border: 2px solid transparent;
-  text-align: left;
-}
-.mode-card:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(83,74,183,0.15); }
-.mode-card-icon {
-  width: 58px; height: 58px; border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; flex-shrink: 0;
-}
-.mode-enfant .mode-card-icon { background: #FFF3CD; }
-.mode-adulte .mode-card-icon { background: var(--violet-pale); }
-.mode-pasteur .mode-card-icon { background: var(--vert-pale); }
-.mode-card-text h3 { font-size: 18px; font-weight: 700; color: var(--violet-dark); margin-bottom: 3px; }
-.mode-card-text p { font-size: 13px; color: var(--gris-text); line-height: 1.4; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes glow { 0%,100% { box-shadow: 0 0 10px var(--or); } 50% { box-shadow: 0 0 30px var(--or); } }
+@keyframes starPop { 0% { transform: scale(0) rotate(0deg); opacity:0; } 60% { transform: scale(1.3) rotate(180deg); opacity:1; } 100% { transform: scale(1) rotate(360deg); opacity:1; } }
 
-/* ═══════════════════════════════════════════════════
-   HEADER DE NAVIGATION
-═══════════════════════════════════════════════════ */
+/* ===== HEADER ===== */
 .app-header {
-  background: white;
-  padding: 16px 20px 12px;
-  display: flex; align-items: center; gap: 12px;
-  box-shadow: 0 1px 8px rgba(83,74,183,0.10);
-  position: sticky; top: 0; z-index: 100;
+  background: var(--violet);
+  color: var(--blanc);
+  padding: 16px 20px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(83,74,183,0.4);
 }
-.btn-back {
-  width: 44px; height: 44px; border-radius: 12px;
-  background: var(--violet-pale);
-  border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; color: var(--violet);
-  transition: var(--transition); flex-shrink: 0;
-}
-.btn-back:active { background: var(--violet-mid); transform: scale(0.93); }
-.header-info { flex: 1; min-width: 0; }
-.header-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--violet-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.header-sub { font-size: 12px; color: var(--gris-text); }
-.btn-audio-repeat {
-  width: 44px; height: 44px; border-radius: 12px;
-  background: var(--violet-pale);
-  border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; color: var(--violet);
-  transition: var(--transition); flex-shrink: 0;
-}
-.btn-audio-repeat:active { background: var(--violet); color: white; transform: scale(0.93); }
-
-/* ═══════════════════════════════════════════════════
-   SÉLECTION LIVRE / CHAPITRE
-═══════════════════════════════════════════════════ */
-#screen-bible { background: var(--gris-clair); }
-.bible-section { padding: 16px; }
-.section-title {
+.app-header h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 16px; font-weight: 700;
-  color: var(--violet-dark);
-  margin-bottom: 12px; padding: 0 4px;
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
 }
-.books-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
-  gap: 10px;
-}
-.book-btn {
-  background: white;
-  border: 2px solid var(--violet-pale);
-  border-radius: 14px;
-  padding: 14px 12px;
-  cursor: pointer;
+.app-header .subtitle { font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
+
+/* ===== BOUTONS ===== */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 24px;
+  border: none;
+  border-radius: 16px;
   font-family: 'Lora', serif;
-  font-size: 13px;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--violet-dark);
-  text-align: left;
-  transition: var(--transition);
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  margin: 8px 0;
+  -webkit-user-select: none;
+}
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: var(--violet); color: var(--blanc); box-shadow: 0 4px 15px rgba(83,74,183,0.35); }
+.btn-primary:active { background: var(--violet-dark); }
+.btn-secondary { background: var(--blanc); color: var(--violet); border: 2px solid var(--violet); }
+.btn-vert { background: var(--vert); color: var(--blanc); box-shadow: 0 4px 15px rgba(46,204,113,0.35); }
+.btn-orange { background: var(--orange); color: var(--blanc); box-shadow: 0 4px 15px rgba(243,156,18,0.35); }
+.btn-icon { font-size: 1.6rem; min-width: 44px; }
+.btn-sm { padding: 12px 18px; font-size: 0.95rem; border-radius: 12px; }
+.btn-rond {
+  width: 64px; height: 64px; border-radius: 50%; border: none;
+  font-size: 1.8rem; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.btn-rond:active { transform: scale(0.9); }
+
+/* ===== ÉCRAN ACCUEIL ===== */
+#screen-accueil {
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--violet) 0%, var(--violet-dark) 60%, #2d2850 100%);
+  color: var(--blanc);
+  text-align: center;
+  padding: 40px 30px;
+  gap: 30px;
+}
+.logo-container { animation: pulse 3s infinite; }
+.logo-svg { width: 120px; height: 120px; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.4)); }
+.app-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.app-tagline { font-size: 1rem; opacity: 0.9; line-height: 1.5; }
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; max-width: 380px; }
+.mode-card {
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 24px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  backdrop-filter: blur(4px);
+}
+.mode-card:active { transform: scale(0.95); background: rgba(255,255,255,0.25); }
+.mode-card .mode-icon { font-size: 3rem; margin-bottom: 8px; }
+.mode-card .mode-label { font-size: 1rem; font-weight: 600; }
+.mode-card .mode-desc { font-size: 0.75rem; opacity: 0.8; margin-top: 4px; }
+
+/* ===== MODE ENFANT ===== */
+body.mode-enfant .btn { font-size: 1.25rem; padding: 22px 28px; border-radius: 20px; }
+body.mode-enfant .btn-icon { font-size: 2rem; }
+body.mode-enfant .app-header h1 { font-size: 1.6rem; }
+body.mode-enfant .word-badge { font-size: 1.6rem; padding: 14px 20px; }
+body.mode-enfant .quiz-option { font-size: 1.4rem; padding: 22px; }
+body.mode-enfant .verse-word { font-size: 1.5rem; }
+body.mode-enfant .syllabe-btn { font-size: 1.4rem; padding: 18px 24px; }
+
+/* ===== SÉLECTION LIVRE/CHAPITRE ===== */
+.section-titre {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--violet);
+  margin: 20px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--violet-light);
+}
+.livre-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.livre-btn {
+  background: var(--blanc);
+  border: 2px solid var(--violet-light);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Lora', serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--violet);
   line-height: 1.3;
 }
-.book-btn:active, .book-btn.selected {
+.livre-btn:active, .livre-btn.selected {
   background: var(--violet);
-  color: white;
+  color: var(--blanc);
   border-color: var(--violet);
-  transform: scale(0.97);
 }
-.book-btn .book-abbr { display: block; font-size: 10px; color: var(--gris-text); margin-bottom: 2px; font-weight: 500; }
-.book-btn.selected .book-abbr { color: rgba(255,255,255,0.75); }
-.chapters-grid {
+.livre-btn.completed { border-color: var(--vert); color: var(--vert); }
+.livre-btn.completed.selected { background: var(--vert); color: var(--blanc); }
+.chap-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
   gap: 8px;
+  margin-bottom: 20px;
 }
-.chapter-btn {
-  background: white;
-  border: 2px solid var(--violet-pale);
-  border-radius: 12px;
+.chap-btn {
+  background: var(--blanc);
+  border: 2px solid var(--violet-light);
+  border-radius: 10px;
   padding: 14px 8px;
+  text-align: center;
   cursor: pointer;
   font-family: 'Lora', serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--violet-dark);
-  text-align: center;
-  transition: var(--transition);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--violet);
+  transition: all 0.15s;
 }
-.chapter-btn:active, .chapter-btn.selected {
+.chap-btn:active, .chap-btn.selected {
   background: var(--violet);
-  color: white;
+  color: var(--blanc);
   border-color: var(--violet);
-  transform: scale(0.95);
 }
-.chapter-btn.done { background: var(--vert-pale); border-color: var(--vert); color: var(--vert); }
-.loading-text { text-align: center; padding: 40px; color: var(--gris-text); font-size: 15px; }
+.chap-btn.completed { border-color: var(--vert); color: var(--vert); }
+
+/* ===== CHARGEMENT ===== */
+.loading-box {
+  background: var(--blanc);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(83,74,183,0.15);
+  margin: 20px 0;
+}
 .loading-spinner {
-  width: 36px; height: 36px; margin: 0 auto 12px;
-  border: 3px solid var(--violet-pale);
+  width: 50px; height: 50px;
+  border: 4px solid var(--violet-light);
   border-top-color: var(--violet);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* ═══════════════════════════════════════════════════
-   ÉCRAN DE LECTURE / APPRENTISSAGE
-═══════════════════════════════════════════════════ */
-#screen-lecture { background: var(--gris-clair); }
-.lecture-content { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
-
-/* Carte verset */
-.verse-card {
-  background: white;
-  border-radius: var(--radius-card);
-  padding: 24px 20px;
-  box-shadow: var(--shadow-card);
-  position: relative;
+.progress-bar-outer {
+  background: #e0deff;
+  border-radius: 10px;
+  height: 12px;
   overflow: hidden;
+  margin-top: 12px;
 }
-.verse-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 4px;
-  background: linear-gradient(90deg, var(--violet), var(--violet-light));
-}
-.verse-ref {
-  font-size: 12px; font-weight: 600;
-  color: var(--violet);
-  text-transform: uppercase; letter-spacing: 0.8px;
-  margin-bottom: 12px;
-}
-.verse-text {
-  font-family: 'Lora', serif;
-  font-size: 20px;
-  line-height: 1.75;
-  color: #1a1a2e;
-  letter-spacing: 0.01em;
-}
-
-/* Mots cliquables */
-.verse-word {
-  display: inline;
-  cursor: pointer;
-  border-radius: 6px;
-  padding: 1px 3px;
-  transition: background 0.2s, color 0.2s;
-  position: relative;
-}
-.verse-word:active { background: var(--violet-pale); }
-.verse-word.word-highlight {
+.progress-bar-inner {
   background: var(--violet);
-  color: white;
-  border-radius: 6px;
-}
-.verse-word.word-learned {
-  background: var(--vert-pale);
-  color: var(--vert);
-  border-bottom: 2px solid var(--vert);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s;
 }
 
-/* Syllabes */
-.syl {
-  display: inline;
-  border-radius: 4px;
-  padding: 0 1px;
-  transition: background 0.15s, color 0.15s;
-}
-.syl.syl-active {
-  background: var(--or);
-  color: #1a1a2e;
-  font-weight: 700;
-}
-.syl.syl-done {
-  background: var(--vert-pale);
-  color: var(--vert);
-}
-
-/* Contrôles lecture */
-.lecture-controls {
-  display: flex; gap: 10px; flex-wrap: wrap;
-}
-.btn-control {
-  flex: 1; min-width: 80px;
-  padding: 14px 12px;
-  border-radius: var(--radius-btn);
-  border: none; cursor: pointer;
-  font-family: 'Lora', serif;
-  font-size: 13px; font-weight: 600;
-  display: flex; flex-direction: column;
-  align-items: center; gap: 4px;
-  transition: var(--transition);
-}
-.btn-control .btn-emoji { font-size: 22px; }
-.btn-primary { background: var(--violet); color: white; box-shadow: var(--shadow-btn); }
-.btn-secondary { background: white; color: var(--violet); border: 2px solid var(--violet-pale); }
-.btn-success { background: var(--vert); color: white; }
-.btn-control:active { transform: scale(0.95); opacity: 0.88; }
-
-/* Étapes pédagogiques */
-.step-indicator {
-  display: flex; gap: 8px; align-items: center;
-  padding: 4px 0;
-}
-.step-dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  background: var(--violet-pale);
-  transition: background 0.3s;
-}
-.step-dot.active { background: var(--violet); transform: scale(1.3); }
-.step-dot.done { background: var(--vert); }
-.step-label {
-  font-size: 13px; color: var(--gris-text);
-  margin-left: 4px;
-}
-
-/* ═══════════════════════════════════════════════════
-   QUIZ SYLLABATION
-═══════════════════════════════════════════════════ */
-#screen-quiz { background: var(--gris-clair); }
-.quiz-content { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 20px; }
-.quiz-word-display {
-  background: white;
-  border-radius: var(--radius-card);
-  padding: 32px 20px;
-  text-align: center;
-  box-shadow: var(--shadow-card);
-}
-.quiz-word-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 13px; font-weight: 700;
-  color: var(--violet);
-  text-transform: uppercase; letter-spacing: 1px;
+/* ===== LECTURE ===== */
+.verset-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--violet);
+  color: var(--blanc);
+  border-radius: 14px;
+  padding: 14px 18px;
   margin-bottom: 16px;
 }
-.quiz-word-text {
-  font-family: 'Lora', serif;
-  font-size: 36px; font-weight: 700;
-  color: var(--violet-dark);
-  margin-bottom: 8px;
-  letter-spacing: 0.02em;
-}
-.quiz-word-syllables {
-  font-size: 16px; color: var(--gris-text);
-  font-style: italic;
-  min-height: 22px;
-}
-.quiz-listen-btn {
-  margin-top: 16px;
-  background: var(--violet-pale);
-  border: none; border-radius: 50px;
-  padding: 10px 24px;
-  font-family: 'Lora', serif;
-  font-size: 15px; font-weight: 600;
-  color: var(--violet); cursor: pointer;
-  transition: var(--transition);
-  display: inline-flex; align-items: center; gap: 8px;
-}
-.quiz-listen-btn:active { background: var(--violet); color: white; }
+.verset-ref { font-size: 0.9rem; opacity: 0.9; }
+.verset-nav { display: flex; gap: 10px; }
 
-.quiz-question {
+.verset-texte {
+  background: var(--blanc);
+  border-radius: 16px;
+  padding: 20px;
+  line-height: 2.2;
+  box-shadow: 0 2px 12px rgba(83,74,183,0.1);
+  margin-bottom: 16px;
+  min-height: 120px;
+}
+.verse-word {
+  display: inline-block;
   font-family: 'Lora', serif;
-  font-size: 16px; font-weight: 600;
-  color: var(--violet-dark);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  margin: 2px;
+  transition: all 0.2s;
+  line-height: 1.6;
+}
+.verse-word:hover { background: #e8e6ff; }
+.verse-word.lecture-active {
+  background: var(--violet);
+  color: var(--blanc);
+  transform: scale(1.12);
+  box-shadow: 0 3px 10px rgba(83,74,183,0.5);
+}
+.verse-word.syllabe-active {
+  background: var(--orange);
+  color: var(--blanc);
+  transform: scale(1.08);
+}
+.verse-word.appris {
+  color: var(--vert);
+  font-weight: 600;
+}
+
+/* Syllabe mise en valeur */
+.syl-span {
+  display: inline;
+  transition: all 0.15s;
+}
+.syl-span.syl-lit {
+  background: var(--orange);
+  color: var(--blanc);
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
+.controles-lecture {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.vitesse-box {
+  background: var(--blanc);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(83,74,183,0.1);
+  margin-bottom: 12px;
+}
+.vitesse-label { font-size: 0.85rem; color: var(--violet); font-weight: 600; }
+.vitesse-slider {
+  -webkit-appearance: none;
+  width: 140px;
+  height: 8px;
+  border-radius: 4px;
+  background: #ddd;
+  outline: none;
+}
+.vitesse-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--violet);
+  cursor: pointer;
+}
+
+/* ===== ÉTAPES PÉDAGOGIQUES ===== */
+.etape-badge {
+  background: var(--violet);
+  color: var(--blanc);
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
   text-align: center;
+  margin-bottom: 12px;
+}
+.etape-instructions {
+  background: #fffbf0;
+  border-left: 4px solid var(--orange);
+  border-radius: 0 12px 12px 0;
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+/* ===== QUIZ ===== */
+.quiz-question {
+  background: var(--violet);
+  color: var(--blanc);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.quiz-mot-cible {
+  font-size: 2rem;
+  font-family: 'Playfair Display', serif;
+  margin: 8px 0;
+  letter-spacing: 2px;
 }
 .quiz-options {
-  display: flex; flex-direction: column; gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 .quiz-option {
-  background: white;
-  border: 2.5px solid var(--violet-pale);
-  border-radius: var(--radius-btn);
+  background: var(--blanc);
+  border: 3px solid var(--violet-light);
+  border-radius: 16px;
   padding: 18px 20px;
-  cursor: pointer;
   font-family: 'Lora', serif;
-  font-size: 22px; font-weight: 700;
-  color: var(--violet-dark);
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
   text-align: center;
-  transition: var(--transition);
-  box-shadow: 0 2px 8px rgba(83,74,183,0.06);
-  letter-spacing: 0.05em;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 .quiz-option:active { transform: scale(0.97); }
 .quiz-option.correct {
-  background: var(--vert-pale);
+  background: var(--vert);
+  color: var(--blanc);
   border-color: var(--vert);
-  color: var(--vert);
+  animation: pulse 0.4s;
 }
-.quiz-option.wrong {
-  background: #FFF0F0;
+.quiz-option.incorrect {
+  background: #ffe0e0;
   border-color: var(--rouge);
   color: var(--rouge);
 }
-.quiz-option.disabled { pointer-events: none; }
+.quiz-option.disabled { pointer-events: none; opacity: 0.6; }
+.quiz-option.bounce { animation: bounce 0.6s; }
 
-/* Barre de progression quiz */
-.quiz-progress {
-  display: flex; align-items: center; gap: 10px;
+/* Syllabe quiz */
+.syllabe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
 }
-.quiz-progress-bar {
-  flex: 1; height: 8px;
-  background: var(--violet-pale);
-  border-radius: 4px; overflow: hidden;
-}
-.quiz-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--violet), var(--violet-light));
-  border-radius: 4px;
-  transition: width 0.5s ease;
-}
-.quiz-score { font-size: 14px; font-weight: 700; color: var(--violet); }
-
-/* ═══════════════════════════════════════════════════
-   ÉCRAN CÉLÉBRATION
-═══════════════════════════════════════════════════ */
-#screen-celebration {
-  background: linear-gradient(160deg, #3C3489 0%, #534AB7 100%);
-  justify-content: center; align-items: center;
-  text-align: center; padding: 32px;
-}
-.celebration-stars {
-  font-size: 60px;
-  margin-bottom: 16px;
-  animation: bounce 0.6s ease infinite alternate;
-}
-@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-12px); } }
-.celebration-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 30px; font-weight: 700;
-  color: white; margin-bottom: 10px;
-}
-.celebration-text { font-size: 16px; color: rgba(255,255,255,0.85); margin-bottom: 32px; line-height: 1.5; }
-.celebration-btn {
-  background: white; color: var(--violet);
-  border: none; border-radius: var(--radius-btn);
-  padding: 18px 40px;
+.syllabe-btn {
+  background: var(--blanc);
+  border: 3px solid var(--violet-light);
+  border-radius: 14px;
+  padding: 16px 10px;
   font-family: 'Lora', serif;
-  font-size: 17px; font-weight: 700;
+  font-size: 1.2rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  transition: var(--transition);
+  text-align: center;
+  color: var(--violet);
+  transition: all 0.2s;
 }
-.celebration-btn:active { transform: scale(0.96); }
+.syllabe-btn:active { transform: scale(0.95); }
+.syllabe-btn.correct { background: var(--vert); color: var(--blanc); border-color: var(--vert); }
+.syllabe-btn.incorrect { background: #ffe0e0; color: var(--rouge); border-color: var(--rouge); }
 
-/* Confettis CSS */
-.confetti-container {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none; overflow: hidden; z-index: 1000;
+/* ===== RÉCOMPENSES ===== */
+.recompense-box {
+  background: linear-gradient(135deg, var(--violet), var(--violet-dark));
+  color: var(--blanc);
+  border-radius: 20px;
+  padding: 30px 20px;
+  text-align: center;
+  margin: 20px 0;
+  box-shadow: 0 6px 25px rgba(83,74,183,0.4);
 }
-.confetti-piece {
-  position: absolute;
-  width: 10px; height: 10px;
-  border-radius: 2px;
-  animation: confettiFall linear forwards;
+.etoiles-container { display: flex; justify-content: center; gap: 12px; margin: 16px 0; }
+.etoile {
+  font-size: 2.5rem;
+  display: inline-block;
+  animation: starPop 0.5s ease-out forwards;
+  opacity: 0;
 }
-@keyframes confettiFall {
-  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-}
+.etoile:nth-child(1) { animation-delay: 0.1s; }
+.etoile:nth-child(2) { animation-delay: 0.3s; }
+.etoile:nth-child(3) { animation-delay: 0.5s; }
 
-/* ═══════════════════════════════════════════════════
-   TABLEAU PASTEUR
-═══════════════════════════════════════════════════ */
-#screen-pasteur { background: var(--gris-clair); }
-.pasteur-content { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
-.stat-card {
-  background: white;
-  border-radius: var(--radius-card);
-  padding: 20px;
-  box-shadow: var(--shadow-card);
-}
-.stat-card h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 15px; color: var(--gris-text);
-  margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.6px;
-}
-.stat-number { font-size: 42px; font-weight: 700; color: var(--violet); font-family: 'Playfair Display', serif; }
-.stat-label { font-size: 13px; color: var(--gris-text); }
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.user-list { list-style: none; }
-.user-item {
-  padding: 14px 0;
-  border-bottom: 1px solid var(--violet-pale);
-  display: flex; justify-content: space-between; align-items: center;
-}
-.user-item:last-child { border-bottom: none; }
-.user-name { font-weight: 600; color: var(--violet-dark); font-size: 15px; }
-.user-stats { font-size: 12px; color: var(--gris-text); }
-.user-badge {
-  background: var(--violet-pale); color: var(--violet);
-  padding: 4px 10px; border-radius: 20px;
-  font-size: 12px; font-weight: 700;
-}
-.btn-export {
-  width: 100%;
-  background: var(--violet);
-  color: white; border: none;
-  border-radius: var(--radius-btn);
-  padding: 16px;
-  font-family: 'Lora', serif;
-  font-size: 16px; font-weight: 600;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  box-shadow: var(--shadow-btn);
-  transition: var(--transition);
-}
-.btn-export:active { opacity: 0.88; transform: scale(0.98); }
-
-/* ═══════════════════════════════════════════════════
-   DÉFINITION POPUP
-═══════════════════════════════════════════════════ */
-#def-popup {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: white;
+/* ===== DÉFINITION ===== */
+.def-popup {
+  position: fixed;
+  bottom: -100%;
+  left: 0; right: 0;
+  background: var(--blanc);
   border-radius: 24px 24px 0 0;
-  padding: 24px 20px 36px;
-  box-shadow: 0 -4px 40px rgba(83,74,183,0.2);
-  z-index: 500;
-  transform: translateY(100%);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-#def-popup.visible { transform: translateY(0); }
-#def-popup-handle {
-  width: 40px; height: 4px;
-  background: var(--violet-pale);
-  border-radius: 2px;
-  margin: 0 auto 20px;
-}
-#def-popup-word {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px; font-weight: 700;
-  color: var(--violet-dark);
-  margin-bottom: 6px;
-}
-#def-popup-def {
-  font-size: 16px; line-height: 1.6;
-  color: #333;
-}
-#def-popup-close {
-  margin-top: 16px;
-  background: var(--violet-pale); color: var(--violet);
-  border: none; border-radius: 12px;
-  padding: 10px 20px;
-  font-family: 'Lora', serif; font-size: 14px; font-weight: 600;
-  cursor: pointer; transition: var(--transition);
-}
-#def-popup-close:active { background: var(--violet); color: white; }
-#def-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 499;
-  display: none;
-}
-#def-overlay.visible { display: block; }
-
-/* ═══════════════════════════════════════════════════
-   INDICATEUR VOCAL
-═══════════════════════════════════════════════════ */
-#voice-indicator {
-  position: fixed; top: 60px; right: 12px;
-  background: var(--violet);
-  color: white;
-  border-radius: 20px;
-  padding: 6px 12px;
-  font-size: 12px; font-weight: 600;
-  display: none;
-  align-items: center; gap: 6px;
+  padding: 24px 24px 40px;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.2);
+  transition: bottom 0.3s ease;
   z-index: 200;
-  box-shadow: 0 2px 12px rgba(83,74,183,0.4);
+  max-height: 40vh;
 }
-#voice-indicator.visible { display: flex; }
-.voice-wave {
-  display: flex; gap: 2px; align-items: center;
+.def-popup.visible { bottom: 0; }
+.def-titre {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--violet);
+  margin-bottom: 8px;
 }
-.voice-wave span {
-  display: block; width: 3px; background: white;
-  border-radius: 2px;
-  animation: waveAnim 0.8s ease-in-out infinite;
+.def-texte { font-size: 1.05rem; line-height: 1.6; color: var(--texte); }
+.def-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--violet);
+  background: none;
+  border: none;
 }
-.voice-wave span:nth-child(1) { height: 6px; animation-delay: 0s; }
-.voice-wave span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
-.voice-wave span:nth-child(3) { height: 8px; animation-delay: 0.3s; }
-.voice-wave span:nth-child(4) { height: 10px; animation-delay: 0.1s; }
-@keyframes waveAnim { 0%,100%{transform:scaleY(0.5)} 50%{transform:scaleY(1)} }
 
-/* ═══════════════════════════════════════════════════
-   SÉLECTEUR DE VITESSE
-═══════════════════════════════════════════════════ */
-.speed-selector {
-  display: flex; gap: 8px; align-items: center;
-  background: white; border-radius: 12px;
-  padding: 10px 14px;
-  box-shadow: 0 1px 6px rgba(83,74,183,0.08);
+/* ===== PASTEUR / SUIVI ===== */
+.suivi-card {
+  background: var(--blanc);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(83,74,183,0.1);
 }
-.speed-label { font-size: 12px; color: var(--gris-text); flex: 1; }
-.speed-btn {
-  padding: 6px 14px;
-  border-radius: 8px; border: 2px solid var(--violet-pale);
-  background: white; color: var(--gris-text);
-  font-family: 'Lora', serif; font-size: 13px; font-weight: 600;
-  cursor: pointer; transition: var(--transition);
+.suivi-nom { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--violet); }
+.suivi-stats { font-size: 0.9rem; color: #666; margin-top: 4px; }
+.suivi-barre {
+  height: 8px;
+  background: #e0deff;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
 }
-.speed-btn.active { background: var(--violet); color: white; border-color: var(--violet); }
+.suivi-barre-fill { height: 100%; background: var(--violet); border-radius: 4px; }
 
-/* ═══════════════════════════════════════════════════
-   RÉPÉTITION AUTO (TIMER)
-═══════════════════════════════════════════════════ */
-#auto-repeat-indicator {
-  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+/* ===== AUDIO INDICATOR ===== */
+.audio-indicator {
+  position: fixed;
+  top: 70px; right: 16px;
   background: var(--orange);
-  color: white;
-  border-radius: 20px;
-  padding: 8px 18px;
-  font-size: 13px; font-weight: 600;
+  color: var(--blanc);
+  border-radius: 50px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
   display: none;
-  z-index: 300;
-  box-shadow: 0 2px 12px rgba(232,133,26,0.4);
+  align-items: center;
+  gap: 6px;
+  z-index: 150;
+  box-shadow: 0 3px 10px rgba(243,156,18,0.4);
 }
-#auto-repeat-indicator.visible { display: block; }
+.audio-indicator.visible { display: flex; }
+.audio-dot {
+  width: 8px; height: 8px;
+  background: var(--blanc);
+  border-radius: 50%;
+  animation: pulse 0.8s infinite;
+}
 
-/* ═══════════════════════════════════════════════════
-   UTILITAIRES
-═══════════════════════════════════════════════════ */
-.mt-8 { margin-top: 8px; }
-.text-center { text-align: center; }
-.hidden { display: none !important; }
-.divider { height: 1px; background: var(--violet-pale); margin: 8px 0; }
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--blanc);
+  border-top: 1px solid #e0deff;
+  display: flex;
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+  z-index: 100;
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #999;
+  font-family: 'Lora', serif;
+  font-size: 0.7rem;
+  transition: color 0.2s;
+}
+.nav-btn .nav-icon { font-size: 1.5rem; }
+.nav-btn.active { color: var(--violet); }
 
-/* Scrollbar stylée */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--violet-mid); border-radius: 2px; }
+/* ===== OVERLAY ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 190;
+  display: none;
+}
+.overlay.visible { display: block; }
 
-/* Empêche le zoom double-tap iOS */
-button, a { touch-action: manipulation; }
+/* ===== SCROLL + PADDING ===== */
+.screen-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 80px;
+}
+.pb80 { padding-bottom: 80px; }
+
+/* ===== WORD BADGE (définitions) ===== */
+.word-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--blanc);
+  border: 2px solid var(--violet-light);
+  border-radius: 50px;
+  padding: 8px 14px;
+  font-family: 'Lora', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--violet);
+  margin: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.word-badge:active { background: var(--violet); color: var(--blanc); }
+
+/* ===== RESPONSIVE ===== */
+@media (min-width: 480px) {
+  .quiz-options { flex-direction: row; flex-wrap: wrap; }
+  .quiz-option { flex: 1 1 45%; }
+}
+
 </style>
 </head>
 <body>
 
-<!-- ════════════════════════════
-     BARRE PROGRESSION HORS-LIGNE
-════════════════════════════ -->
-<div id="offline-bar">
-  <div id="offline-bar-text">📥 Préparation de la Parole pour l'accès hors ligne…</div>
-  <div id="offline-bar-sub">Chargement de la Bible en cours — ne quittez pas</div>
-  <div id="offline-progress-track">
-    <div id="offline-progress-fill"></div>
-  </div>
+<!-- AUDIO INDICATOR -->
+<div class="audio-indicator" id="audioIndicator">
+  <div class="audio-dot"></div>
+  <span id="audioText">Lecture...</span>
 </div>
 
-<!-- ════════════════════════════
-     INDICATEUR VOCAL
-════════════════════════════ -->
-<div id="voice-indicator">
-  <div class="voice-wave">
-    <span></span><span></span><span></span><span></span>
-  </div>
-  <span id="voice-text">Lecture…</span>
+<!-- DÉFINITION POPUP -->
+<div class="overlay" id="defOverlay" onclick="fermerDef()"></div>
+<div class="def-popup" id="defPopup">
+  <button class="def-close" onclick="fermerDef()">✕</button>
+  <div class="def-titre" id="defTitre">Mot</div>
+  <div class="def-texte" id="defTexte">Définition</div>
 </div>
 
-<!-- ════════════════════════════
-     RAPPEL AUTO
-════════════════════════════ -->
-<div id="auto-repeat-indicator">🔁 Répétition automatique…</div>
-
-<!-- ════════════════════════════
-     DÉFINITION POPUP
-════════════════════════════ -->
-<div id="def-overlay" onclick="closeDefPopup()"></div>
-<div id="def-popup">
-  <div id="def-popup-handle"></div>
-  <div id="def-popup-word"></div>
-  <div id="def-popup-def"></div>
-  <button id="def-popup-close" onclick="closeDefPopup()">Fermer ✕</button>
-</div>
-
-<!-- ════════════════════════════
-     CONFETTIS
-════════════════════════════ -->
-<div class="confetti-container" id="confetti-container"></div>
-
-<!-- ══════════════════════════════════════════════
-     ÉCRAN 1 : ACCUEIL
-══════════════════════════════════════════════ -->
-<div id="screen-home" class="screen active">
-  <div class="home-logo">
-    <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="27" y="8" width="6" height="44" rx="3" fill="white"/>
-      <rect x="8" y="27" width="44" height="6" rx="3" fill="white"/>
+<!-- ════════════════════════════════════════════
+     ÉCRAN ACCUEIL
+════════════════════════════════════════════ -->
+<div class="screen active" id="screen-accueil">
+  <div class="logo-container">
+    <svg class="logo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <rect width="120" height="120" rx="28" fill="white" fill-opacity="0.15"/>
+      <line x1="60" y1="20" x2="60" y2="100" stroke="white" stroke-width="12" stroke-linecap="round"/>
+      <line x1="30" y1="48" x2="90" y2="48" stroke="white" stroke-width="12" stroke-linecap="round"/>
     </svg>
   </div>
-  <h1 class="home-title">La Parole<br>Apprivoisée</h1>
-  <p class="home-subtitle">Apprenons à lire avec la Bible<br>Louis Segond 1910</p>
-  <div class="mode-cards">
-    <div class="mode-card mode-enfant" onclick="selectMode('enfant')" role="button">
-      <div class="mode-card-icon">👧</div>
-      <div class="mode-card-text">
-        <h3>Mode Enfant</h3>
-        <p>Images, couleurs et voix douce pour les petits</p>
-      </div>
+  <div class="app-title">La Parole<br/>Apprivoisée</div>
+  <div class="app-tagline">Apprends à lire avec la Bible<br/>Louis Segond 1910</div>
+  <div class="mode-grid">
+    <div class="mode-card" onclick="choisirMode('enfant')">
+      <div class="mode-icon">🧒</div>
+      <div class="mode-label">Enfant</div>
+      <div class="mode-desc">Grandes lettres, voix douce</div>
     </div>
-    <div class="mode-card mode-adulte" onclick="selectMode('adulte')" role="button">
-      <div class="mode-card-icon">🙏</div>
-      <div class="mode-card-text">
-        <h3>Mode Adulte</h3>
-        <p>Apprentissage spirituel, rythme normal</p>
-      </div>
+    <div class="mode-card" onclick="choisirMode('adulte')">
+      <div class="mode-icon">📖</div>
+      <div class="mode-label">Adulte</div>
+      <div class="mode-desc">Sobre et spirituel</div>
     </div>
-    <div class="mode-card mode-pasteur" onclick="showScreen('pasteur')" role="button">
-      <div class="mode-card-icon">📊</div>
-      <div class="mode-card-text">
-        <h3>Tableau Pasteur</h3>
-        <p>Suivre la progression des apprenants</p>
-      </div>
-    </div>
+  </div>
+  <div style="font-size:0.75rem;opacity:0.7;text-align:center;margin-top:8px;">
+    Touche ton mode pour commencer
+  </div>
+  <div id="bible-status" style="
+    margin-top:16px;
+    background:rgba(255,255,255,0.12);
+    border-radius:50px;
+    padding:6px 14px;
+    font-size:0.72rem;
+    display:flex;align-items:center;gap:7px;
+    transition:opacity 0.4s;
+  ">
+    <span id="bible-status-dot" style="width:8px;height:8px;border-radius:50%;background:#aaa;display:inline-block;"></span>
+    <span id="bible-status-txt">Chargement de la Bible...</span>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     ÉCRAN 2 : SÉLECTION BIBLE
-══════════════════════════════════════════════ -->
-<div id="screen-bible" class="screen">
+<!-- ════════════════════════════════════════════
+     ÉCRAN SÉLECTION LIVRE
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-livres">
   <div class="app-header">
-    <button class="btn-back" onclick="showScreen('home')" aria-label="Accueil">🏠</button>
-    <div class="header-info">
-      <div class="header-title" id="bible-header-title">📖 Choisir un livre</div>
-      <div class="header-sub" id="bible-header-sub">Bible Louis Segond 1910</div>
-    </div>
-    <button class="btn-audio-repeat" onclick="repeatCurrentAudio()" aria-label="Réécouter">🔁</button>
+    <h1>📚 Choix du Livre</h1>
+    <div class="subtitle">Touche un livre de la Bible</div>
   </div>
-  <div id="bible-content" style="overflow-y:auto; flex:1; padding-bottom:24px;">
-    <!-- Injected dynamically -->
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     ÉCRAN 3 : LECTURE & APPRENTISSAGE
-══════════════════════════════════════════════ -->
-<div id="screen-lecture" class="screen">
-  <div class="app-header">
-    <button class="btn-back" onclick="backFromLecture()" aria-label="Retour">←</button>
-    <div class="header-info">
-      <div class="header-title" id="lecture-header-title">Lecture</div>
-      <div class="header-sub" id="lecture-header-sub"></div>
-    </div>
-    <button class="btn-audio-repeat" onclick="repeatCurrentAudio()" aria-label="Réécouter">🔁</button>
-  </div>
-  <div class="lecture-content">
-
-    <!-- Étapes pédagogiques -->
-    <div class="step-indicator" id="step-indicator">
-      <div class="step-dot active" id="dot-1"></div>
-      <div class="step-dot" id="dot-2"></div>
-      <div class="step-dot" id="dot-3"></div>
-      <div class="step-dot" id="dot-4"></div>
-      <span class="step-label" id="step-label">Écoute du verset</span>
-    </div>
-
-    <!-- Sélecteur de vitesse -->
-    <div class="speed-selector">
-      <span class="speed-label">🎵 Vitesse de lecture</span>
-      <button class="speed-btn" id="speed-slow" onclick="setSpeed(0.6)">Lent</button>
-      <button class="speed-btn active" id="speed-normal" onclick="setSpeed(0.85)">Normal</button>
-    </div>
-
-    <!-- Carte verset principal -->
-    <div class="verse-card">
-      <div class="verse-ref" id="verse-ref">Genèse 1:1</div>
-      <div class="verse-text" id="verse-text-display"></div>
-    </div>
-
-    <!-- Contrôles -->
-    <div class="lecture-controls" id="lecture-controls">
-      <button class="btn-control btn-primary" onclick="readVerseAloud()" id="btn-read">
-        <span class="btn-emoji">🔊</span>
-        <span>Écouter</span>
-      </button>
-      <button class="btn-control btn-secondary" onclick="readWordByWord()" id="btn-words">
-        <span class="btn-emoji">🎵</span>
-        <span>Mot par mot</span>
-      </button>
-      <button class="btn-control btn-success" onclick="startQuiz()" id="btn-quiz">
-        <span class="btn-emoji">⭐</span>
-        <span>Quiz</span>
-      </button>
-    </div>
-
-    <!-- Navigation verset -->
-    <div class="lecture-controls">
-      <button class="btn-control btn-secondary" onclick="prevVerse()" id="btn-prev">
-        <span class="btn-emoji">◀</span>
-        <span>Précédent</span>
-      </button>
-      <button class="btn-control btn-secondary" onclick="nextVerse()" id="btn-next">
-        <span class="btn-emoji">▶</span>
-        <span>Suivant</span>
-      </button>
-    </div>
-
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     ÉCRAN 4 : QUIZ SYLLABATION
-══════════════════════════════════════════════ -->
-<div id="screen-quiz" class="screen">
-  <div class="app-header">
-    <button class="btn-back" onclick="showScreen('lecture')" aria-label="Retour">←</button>
-    <div class="header-info">
-      <div class="header-title">⭐ Quiz de lecture</div>
-      <div class="header-sub" id="quiz-header-sub"></div>
-    </div>
-    <button class="btn-audio-repeat" onclick="repeatCurrentAudio()" aria-label="Réécouter">🔁</button>
-  </div>
-  <div class="quiz-content">
-    <!-- Progression -->
-    <div class="quiz-progress">
-      <div class="quiz-progress-bar">
-        <div class="quiz-progress-fill" id="quiz-progress-fill" style="width:0%"></div>
-      </div>
-      <div class="quiz-score" id="quiz-score-display">0 / 0</div>
-    </div>
-
-    <!-- Mot à apprendre -->
-    <div class="quiz-word-display">
-      <div class="quiz-word-title">🎵 Quel est ce mot ?</div>
-      <div class="quiz-word-text" id="quiz-word-text">—</div>
-      <div class="quiz-word-syllables" id="quiz-syllables-display"></div>
-      <button class="quiz-listen-btn" onclick="listenQuizWord()">🔊 Écouter le mot</button>
-    </div>
-
-    <!-- Question -->
-    <div class="quiz-question" id="quiz-question-text">Touche la bonne syllabe :</div>
-
-    <!-- Options -->
-    <div class="quiz-options" id="quiz-options"></div>
-
-    <!-- Bouton continuer -->
-    <button class="btn-control btn-success hidden" id="btn-quiz-next" onclick="nextQuizWord()" style="width:100%; padding:16px;">
-      <span class="btn-emoji">▶</span>
-      <span>Mot suivant</span>
+  <div class="screen-content" style="padding:16px;">
+    <button class="btn btn-secondary btn-sm" style="width:auto;margin-bottom:16px;" onclick="allerAccueil()">
+      ← Accueil
     </button>
+    <div class="section-titre">📜 Ancien Testament</div>
+    <div class="livre-grid" id="grid-ancien"></div>
+    <div class="section-titre">✝️ Nouveau Testament</div>
+    <div class="livre-grid" id="grid-nouveau"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     ÉCRAN 5 : CÉLÉBRATION
-══════════════════════════════════════════════ -->
-<div id="screen-celebration" class="screen">
-  <div class="celebration-stars" id="celebration-stars">⭐⭐⭐</div>
-  <h2 class="celebration-title" id="celebration-title">Excellent !</h2>
-  <p class="celebration-text" id="celebration-text">Tu as bien lu ce verset.<br>Continue comme ça !</p>
-  <button class="celebration-btn" onclick="continueLearning()">Continuer 📖</button>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     ÉCRAN 6 : TABLEAU PASTEUR
-══════════════════════════════════════════════ -->
-<div id="screen-pasteur" class="screen">
+<!-- ════════════════════════════════════════════
+     ÉCRAN SÉLECTION CHAPITRE
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-chapitres">
   <div class="app-header">
-    <button class="btn-back" onclick="showScreen('home')" aria-label="Accueil">🏠</button>
-    <div class="header-info">
-      <div class="header-title">📊 Tableau Pasteur</div>
-      <div class="header-sub">Suivi de la progression</div>
-    </div>
-    <button class="btn-audio-repeat" onclick="repeatCurrentAudio()" aria-label="Réécouter">🔁</button>
+    <h1 id="header-livre">Chapitres</h1>
+    <div class="subtitle">Choisis un chapitre</div>
   </div>
-  <div class="pasteur-content" id="pasteur-content">
-    <!-- Injecté dynamiquement -->
+  <div class="screen-content" style="padding:16px;">
+    <button class="btn btn-secondary btn-sm" style="width:auto;margin-bottom:16px;" onclick="afficherLivres()">
+      ← Livres
+    </button>
+    <div id="chapitres-loading" class="loading-box" style="display:none;">
+      <div class="loading-spinner"></div>
+      <div id="chapitres-loading-text">Chargement...</div>
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="chapitres-progress" style="width:0%"></div></div>
+    </div>
+    <div class="chap-grid" id="grid-chapitres"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     JAVASCRIPT PRINCIPAL
-══════════════════════════════════════════════ -->
-<script>
-/* ═══════════════════════════════════════
-   1. ÉTAT GLOBAL
-═══════════════════════════════════════ */
-const APP = {
-  mode: 'adulte',        // 'enfant' | 'adulte'
-  speechRate: 0.85,
-  currentBook: null,     // { num, name, chapters }
-  currentChapter: null,  // tableau de versets
-  currentChapterNum: 0,
-  currentVerseIdx: 0,
-  currentVerseWords: [],
-  quizWords: [],
-  quizIdx: 0,
-  quizScore: 0,
-  bibleCache: {},        // num -> {name, chapters: {1: [{v, t}]}}
-  autoRepeatTimer: null,
-  currentScreen: 'home',
-  lastAudioText: '',
-};
+<!-- ════════════════════════════════════════════
+     ÉCRAN LECTURE
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-lecture">
+  <div class="app-header">
+    <h1 id="header-lecture">Lecture</h1>
+    <div class="subtitle" id="header-lecture-sub">Écoute et suis</div>
+  </div>
+  <div class="screen-content" style="padding:16px;">
 
-/* ═══════════════════════════════════════
-   2. DONNÉES BIBLIQUES
-═══════════════════════════════════════ */
-const BOOKS = [
-  {n:1,  name:"Genèse",          abbr:"Gn",  chapters:50},
-  {n:2,  name:"Exode",           abbr:"Ex",  chapters:40},
-  {n:3,  name:"Lévitique",       abbr:"Lv",  chapters:27},
-  {n:4,  name:"Nombres",         abbr:"Nb",  chapters:36},
-  {n:5,  name:"Deutéronome",     abbr:"Dt",  chapters:34},
-  {n:6,  name:"Josué",           abbr:"Jos", chapters:24},
-  {n:7,  name:"Juges",           abbr:"Jg",  chapters:21},
-  {n:8,  name:"Ruth",            abbr:"Rt",  chapters:4},
-  {n:9,  name:"1 Samuel",        abbr:"1S",  chapters:31},
-  {n:10, name:"2 Samuel",        abbr:"2S",  chapters:24},
-  {n:11, name:"1 Rois",          abbr:"1R",  chapters:22},
-  {n:12, name:"2 Rois",          abbr:"2R",  chapters:25},
-  {n:13, name:"1 Chroniques",    abbr:"1Ch", chapters:29},
-  {n:14, name:"2 Chroniques",    abbr:"2Ch", chapters:36},
-  {n:15, name:"Esdras",          abbr:"Esd", chapters:10},
-  {n:16, name:"Néhémie",         abbr:"Né",  chapters:13},
-  {n:17, name:"Esther",          abbr:"Est", chapters:10},
-  {n:18, name:"Job",             abbr:"Jb",  chapters:42},
-  {n:19, name:"Psaumes",         abbr:"Ps",  chapters:150},
-  {n:20, name:"Proverbes",       abbr:"Pr",  chapters:31},
-  {n:21, name:"Ecclésiaste",     abbr:"Ec",  chapters:12},
-  {n:22, name:"Cantique",        abbr:"Ca",  chapters:8},
-  {n:23, name:"Ésaïe",           abbr:"És",  chapters:66},
-  {n:24, name:"Jérémie",         abbr:"Jr",  chapters:52},
-  {n:25, name:"Lamentations",    abbr:"Lm",  chapters:5},
-  {n:26, name:"Ézéchiel",        abbr:"Éz",  chapters:48},
-  {n:27, name:"Daniel",          abbr:"Dn",  chapters:12},
-  {n:28, name:"Osée",            abbr:"Os",  chapters:14},
-  {n:29, name:"Joël",            abbr:"Jl",  chapters:3},
-  {n:30, name:"Amos",            abbr:"Am",  chapters:9},
-  {n:31, name:"Abdias",          abbr:"Ab",  chapters:1},
-  {n:32, name:"Jonas",           abbr:"Jon", chapters:4},
-  {n:33, name:"Michée",          abbr:"Mi",  chapters:7},
-  {n:34, name:"Nahum",           abbr:"Na",  chapters:3},
-  {n:35, name:"Habacuc",         abbr:"Ha",  chapters:3},
-  {n:36, name:"Sophonie",        abbr:"So",  chapters:3},
-  {n:37, name:"Aggée",           abbr:"Ag",  chapters:2},
-  {n:38, name:"Zacharie",        abbr:"Za",  chapters:14},
-  {n:39, name:"Malachie",        abbr:"Ml",  chapters:4},
-  {n:40, name:"Matthieu",        abbr:"Mt",  chapters:28},
-  {n:41, name:"Marc",            abbr:"Mc",  chapters:16},
-  {n:42, name:"Luc",             abbr:"Lc",  chapters:24},
-  {n:43, name:"Jean",            abbr:"Jn",  chapters:21},
-  {n:44, name:"Actes",           abbr:"Ac",  chapters:28},
-  {n:45, name:"Romains",         abbr:"Rm",  chapters:16},
-  {n:46, name:"1 Corinthiens",   abbr:"1Co", chapters:16},
-  {n:47, name:"2 Corinthiens",   abbr:"2Co", chapters:13},
-  {n:48, name:"Galates",         abbr:"Ga",  chapters:6},
-  {n:49, name:"Éphésiens",       abbr:"Ep",  chapters:6},
-  {n:50, name:"Philippiens",     abbr:"Ph",  chapters:4},
-  {n:51, name:"Colossiens",      abbr:"Col", chapters:4},
-  {n:52, name:"1 Thessaloniciens",abbr:"1Th",chapters:5},
-  {n:53, name:"2 Thessaloniciens",abbr:"2Th",chapters:3},
-  {n:54, name:"1 Timothée",      abbr:"1Tm", chapters:6},
-  {n:55, name:"2 Timothée",      abbr:"2Tm", chapters:4},
-  {n:56, name:"Tite",            abbr:"Ti",  chapters:3},
-  {n:57, name:"Philémon",        abbr:"Phm", chapters:1},
-  {n:58, name:"Hébreux",         abbr:"Hé",  chapters:13},
-  {n:59, name:"Jacques",         abbr:"Jc",  chapters:5},
-  {n:60, name:"1 Pierre",        abbr:"1P",  chapters:5},
-  {n:61, name:"2 Pierre",        abbr:"2P",  chapters:3},
-  {n:62, name:"1 Jean",          abbr:"1Jn", chapters:5},
-  {n:63, name:"2 Jean",          abbr:"2Jn", chapters:1},
-  {n:64, name:"3 Jean",          abbr:"3Jn", chapters:1},
-  {n:65, name:"Jude",            abbr:"Jude",chapters:1},
-  {n:66, name:"Apocalypse",      abbr:"Ap",  chapters:22},
+        <div class="vitesse-box">
+      <span class="vitesse-label">🔊 Vitesse</span>
+      <input type="range" class="vitesse-slider" id="vitesseSlider" min="0.5" max="1.5" step="0.1" value="0.85"
+             oninput="changerVitesse(this.value)"/>
+      <span id="vitesseVal" style="font-size:0.85rem;color:var(--violet);min-width:30px;">0.85</span>
+    </div>
+
+    <div class="verset-header">   <div>
+        <div class="verset-ref" id="verset-ref">Genèse 1:1</div>
+        <div style="font-size:0.75rem;opacity:0.8;" id="verset-progres">Verset 1/31</div>
+      </div>
+      <div class="verset-nav">
+        <button class="btn-rond" style="background:rgba(255,255,255,0.2);color:white;font-size:1.2rem;" onclick="versetPrecedent()">◀</button>
+        <button class="btn-rond" style="background:rgba(255,255,255,0.2);color:white;font-size:1.2rem;" onclick="versetSuivant()">▶</button>
+      </div>
+    </div>
+
+    <div class="verset-texte" id="verset-texte">
+      <!-- Les mots du verset apparaissent ici -->
+    </div>
+
+    <div class="etape-badge" id="etape-badge">Étape 1 — Écoute</div>
+    <div class="etape-instructions" id="etape-instructions">
+      Écoute attentivement le verset lu à voix haute.
+    </div>
+
+    <!-- Contrôles lecture -->
+    <div id="controles-ecoute" class="controles-lecture">
+      <button class="btn btn-primary" style="flex:1;" onclick="lireVersetComplet()">
+        <span class="btn-icon">🔊</span> Écouter
+      </button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="lireMotAMot()">
+        <span class="btn-icon">👆</span> Mot par mot
+      </button>
+    </div>
+
+    <!-- Contrôles navigation étapes -->
+    <div id="controles-etapes" style="display:none;">
+      <button class="btn btn-vert" onclick="etapeSuivante()">
+        <span class="btn-icon">▶</span> Continuer
+      </button>
+    </div>
+
+    <!-- Quiz syllabe -->
+    <div id="quiz-syllabe-zone" style="display:none;">
+      <div class="quiz-question">
+        🔤 Touche la bonne syllabe
+        <div class="quiz-mot-cible" id="syllabe-mot-cible">—</div>
+      </div>
+      <div class="syllabe-grid" id="syllabe-options"></div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:8px;" onclick="ecouter_mot_quiz()">
+        🔊 Réécouter ce mot
+      </button>
+    </div>
+
+    <!-- Quiz reconnaissance -->
+    <div id="quiz-reco-zone" style="display:none;">
+      <div class="quiz-question">
+        👂 Quel mot as-tu entendu ?
+        <div style="font-size:0.85rem;margin-top:6px;opacity:0.9;">Touche le bon mot</div>
+      </div>
+      <button class="btn btn-orange btn-sm" style="margin-bottom:12px;" onclick="rejouerQuizReco()">
+        🔊 Réécouter
+      </button>
+      <div class="quiz-options" id="reco-options"></div>
+    </div>
+
+    <!-- Récompense verset -->
+    <div id="recompense-zone" style="display:none;">
+      <div class="recompense-box">
+        <div style="font-size:1.6rem;font-weight:700;margin-bottom:8px;">🎉 Bravo !</div>
+        <div class="etoiles-container" id="etoiles-box"></div>
+        <div style="font-size:1rem;margin-top:10px;" id="recompense-msg">Tu as terminé ce verset !</div>
+      </div>
+      <button class="btn btn-primary" onclick="versetSuivant()">
+        <span class="btn-icon">▶</span> Verset suivant
+      </button>
+      <button class="btn btn-secondary" onclick="afficherChapitres()">
+        <span class="btn-icon">📋</span> Choisir autre chapitre
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="afficherLivres()">
+      <span class="nav-icon">📚</span>Bible
+    </button>
+    <button class="nav-btn" onclick="lireVersetComplet()">
+      <span class="nav-icon">🔊</span>Écouter
+    </button>
+    <button class="nav-btn" onclick="afficherPasteur()">
+      <span class="nav-icon">✝️</span>Pasteur
+    </button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════════
+     ÉCRAN PASTEUR
+════════════════════════════════════════════ -->
+<div class="screen" id="screen-pasteur">
+  <div class="app-header">
+    <h1>✝️ Suivi Pasteur</h1>
+    <div class="subtitle">Tableau de progression</div>
+  </div>
+  <div class="screen-content" style="padding:16px;">
+    <button class="btn btn-secondary btn-sm" style="width:auto;margin-bottom:16px;" onclick="retourLecture()">
+      ← Retour
+    </button>
+    <div id="suivi-eleves"></div>
+    <div style="margin-top:16px;">
+      <div class="section-titre">Ajouter un élève</div>
+      <div style="display:flex;gap:10px;margin-bottom:10px;">
+        <input type="text" id="nouvelEleve" placeholder="Prénom de l'élève"
+          style="flex:1;padding:14px;border:2px solid var(--violet-light);border-radius:12px;font-family:'Lora',serif;font-size:1rem;"/>
+        <button class="btn btn-primary" style="width:auto;padding:14px 20px;margin:0;" onclick="ajouterEleve()">
+          ➕
+        </button>
+      </div>
+      <button class="btn btn-orange btn-sm" onclick="exporterSuivi()">
+        📤 Exporter en texte
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  LA PAROLE APPRIVOISÉE — Phase 1 complète
+//  Version 2.0 — Correction complète
+// ═══════════════════════════════════════════════════════════
+
+// ─── CONSTANTES ─────────────────────────────────────────
+// Fichier Bible complet servi statiquement (même dossier que index.html)
+const BIBLE_JSON_URL = './segond_1910.json';
+// Fallback API getbible (chapitre par chapitre, URL correcte v2)
+const API_BASE = 'https://api.getbible.net/v2/lsg/'; // /lsg/{bookNum}/{chapNum}.json
+const CACHE_PREFIX = 'lpa_bible_';
+const VITESSE_DEFAULT = 0.85;
+const DELAI_REPETITION = 6000; // ms avant répétition audio
+
+// ─── BIBLE EN MÉMOIRE ────────────────────────────────────
+// Après chargement : bibleData[bookNum][chapNum][verseNum] = "texte"
+let bibleData = null;
+let bibleChargee = false;
+let bibleChargementEnCours = false;
+let bibleChargementCallbacks = [];
+
+async function chargerBibleComplete() {
+  if (bibleChargee) return true;
+  if (bibleChargementEnCours) {
+    return new Promise(resolve => bibleChargementCallbacks.push(resolve));
+  }
+  bibleChargementEnCours = true;
+
+  // Calculer l'URL absolue réelle tentée (utile pour debug)
+  const urlAbsolue = new URL(BIBLE_JSON_URL, location.href).href;
+  console.log('[Bible] Tentative fetch :', urlAbsolue);
+  majStatut('⏳', 'Chargement Bible...', '#aaa');
+
+  try {
+    const resp = await fetch(BIBLE_JSON_URL);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status + ' — ' + urlAbsolue);
+    majStatut('⏳', 'Lecture des versets...', '#f39c12');
+    const data = await resp.json();
+    if (!data.verses || !Array.isArray(data.verses)) throw new Error('Format JSON inattendu');
+
+    bibleData = {};
+    for (const v of data.verses) {
+      const b = v.book, c = v.chapter, n = v.verse;
+      if (!bibleData[b]) bibleData[b] = {};
+      if (!bibleData[b][c]) bibleData[b][c] = {};
+      bibleData[b][c][n] = nettoyerTexte(v.text || '');
+    }
+    console.log('[Bible] OK — ' + data.verses.length + ' versets indexés');
+    bibleChargee = true;
+    bibleChargementEnCours = false;
+    bibleChargementCallbacks.forEach(cb => cb(true));
+    bibleChargementCallbacks = [];
+    return true;
+  } catch(e) {
+    console.warn('[Bible] ERREUR :', e.message);
+    majStatut('⚠️', 'Mode internet (Bible locale absente)', '#f39c12');
+    bibleData = {};
+    bibleChargee = true;
+    bibleChargementEnCours = false;
+    bibleChargementCallbacks.forEach(cb => cb(false));
+    bibleChargementCallbacks = [];
+    return false;
+  }
+}
+
+function majStatut(dot, texte, couleur) {
+  const d = document.getElementById('bible-status-dot');
+  const t = document.getElementById('bible-status-txt');
+  if (d) d.style.background = couleur;
+  if (t) t.textContent = texte;
+}
+
+// Overlay de chargement — petit bandeau discret, ne bloque pas l'UI
+function afficherOverlayChargement() { /* non utilisé — chargement en arrière-plan silencieux */ }
+function cacherOverlayChargement() { /* non utilisé */ }
+
+// ─── LIVRES DE LA BIBLE ──────────────────────────────────
+const LIVRES = [
+  // Ancien Testament
+  {n:1,nom:"Genèse",abr:"Gn",chap:50},{n:2,nom:"Exode",abr:"Ex",chap:40},
+  {n:3,nom:"Lévitique",abr:"Lv",chap:27},{n:4,nom:"Nombres",abr:"Nb",chap:36},
+  {n:5,nom:"Deutéronome",abr:"Dt",chap:34},{n:6,nom:"Josué",abr:"Jos",chap:24},
+  {n:7,nom:"Juges",abr:"Jg",chap:21},{n:8,nom:"Ruth",abr:"Rt",chap:4},
+  {n:9,nom:"1 Samuel",abr:"1S",chap:31},{n:10,nom:"2 Samuel",abr:"2S",chap:24},
+  {n:11,nom:"1 Rois",abr:"1R",chap:22},{n:12,nom:"2 Rois",abr:"2R",chap:25},
+  {n:13,nom:"1 Chroniques",abr:"1Ch",chap:29},{n:14,nom:"2 Chroniques",abr:"2Ch",chap:36},
+  {n:15,nom:"Esdras",abr:"Esd",chap:10},{n:16,nom:"Néhémie",abr:"Né",chap:13},
+  {n:17,nom:"Esther",abr:"Est",chap:10},{n:18,nom:"Job",abr:"Jb",chap:42},
+  {n:19,nom:"Psaumes",abr:"Ps",chap:150},{n:20,nom:"Proverbes",abr:"Pr",chap:31},
+  {n:21,nom:"Ecclésiaste",abr:"Ec",chap:12},{n:22,nom:"Cantique",abr:"Ct",chap:8},
+  {n:23,nom:"Ésaïe",abr:"És",chap:66},{n:24,nom:"Jérémie",abr:"Jr",chap:52},
+  {n:25,nom:"Lamentations",abr:"Lm",chap:5},{n:26,nom:"Ézéchiel",abr:"Éz",chap:48},
+  {n:27,nom:"Daniel",abr:"Dn",chap:12},{n:28,nom:"Osée",abr:"Os",chap:14},
+  {n:29,nom:"Joël",abr:"Jl",chap:3},{n:30,nom:"Amos",abr:"Am",chap:9},
+  {n:31,nom:"Abdias",abr:"Ab",chap:1},{n:32,nom:"Jonas",abr:"Jon",chap:4},
+  {n:33,nom:"Michée",abr:"Mi",chap:7},{n:34,nom:"Nahoum",abr:"Na",chap:3},
+  {n:35,nom:"Habacuc",abr:"Ha",chap:3},{n:36,nom:"Sophonie",abr:"So",chap:3},
+  {n:37,nom:"Aggée",abr:"Ag",chap:2},{n:38,nom:"Zacharie",abr:"Za",chap:14},
+  {n:39,nom:"Malachie",abr:"Ml",chap:4},
+  // Nouveau Testament
+  {n:40,nom:"Matthieu",abr:"Mt",chap:28},{n:41,nom:"Marc",abr:"Mc",chap:16},
+  {n:42,nom:"Luc",abr:"Lc",chap:24},{n:43,nom:"Jean",abr:"Jn",chap:21},
+  {n:44,nom:"Actes",abr:"Ac",chap:28},{n:45,nom:"Romains",abr:"Rm",chap:16},
+  {n:46,nom:"1 Corinthiens",abr:"1Co",chap:16},{n:47,nom:"2 Corinthiens",abr:"2Co",chap:13},
+  {n:48,nom:"Galates",abr:"Ga",chap:6},{n:49,nom:"Éphésiens",abr:"Ép",chap:6},
+  {n:50,nom:"Philippiens",abr:"Ph",chap:4},{n:51,nom:"Colossiens",abr:"Col",chap:4},
+  {n:52,nom:"1 Thessaloniciens",abr:"1Th",chap:5},{n:53,nom:"2 Thessaloniciens",abr:"2Th",chap:3},
+  {n:54,nom:"1 Timothée",abr:"1Tm",chap:6},{n:55,nom:"2 Timothée",abr:"2Tm",chap:4},
+  {n:56,nom:"Tite",abr:"Ti",chap:3},{n:57,nom:"Philémon",abr:"Phm",chap:1},
+  {n:58,nom:"Hébreux",abr:"Hé",chap:13},{n:59,nom:"Jacques",abr:"Jc",chap:5},
+  {n:60,nom:"1 Pierre",abr:"1P",chap:5},{n:61,nom:"2 Pierre",abr:"2P",chap:3},
+  {n:62,nom:"1 Jean",abr:"1Jn",chap:5},{n:63,nom:"2 Jean",abr:"2Jn",chap:1},
+  {n:64,nom:"3 Jean",abr:"3Jn",chap:1},{n:65,nom:"Jude",abr:"Jude",chap:1},
+  {n:66,nom:"Apocalypse",abr:"Ap",chap:22}
 ];
 
-/* ═══════════════════════════════════════
-   3. DICTIONNAIRE DE DÉFINITIONS
-═══════════════════════════════════════ */
+// ─── DÉFINITIONS BIBLIQUES ────────────────────────────────
 const DEFINITIONS = {
-  "éternel": "C'est le nom de Dieu — celui qui a toujours existé et qui existera toujours. Il n'a ni début ni fin.",
-  "seigneur": "C'est Dieu, le maître de tout l'univers. Il est au-dessus de tout.",
-  "alliance": "Un accord très important entre Dieu et les hommes, comme une promesse solennelle qu'on ne peut pas briser.",
-  "grâce": "C'est quand Dieu nous aime et nous aide, même si nous ne le méritons pas.",
-  "gloire": "La magnificence et la grandeur de Dieu. Quand la gloire de Dieu apparaît, c'est une lumière et une puissance extraordinaires.",
-  "saint": "Quelqu'un ou quelque chose qui est mis à part pour Dieu, pur et sans péché.",
+  "éternel": "C'est le nom de Dieu — Celui qui a toujours existé, qui existera toujours.",
+  "seigneur": "C'est Dieu lui-même, le maître de tout ce qui existe.",
+  "dieu": "Le Créateur du ciel et de la terre, Celui qui nous a faits.",
+  "grâce": "L'amour gratuit de Dieu pour nous, sans que nous le méritions.",
+  "foi": "Croire en Dieu et faire confiance à ses promesses.",
+  "salut": "Être sauvé du péché par Jésus-Christ pour vivre avec Dieu.",
+  "péché": "Ce qui est mal devant Dieu — désobéir à ses commandements.",
   "prophète": "Une personne choisie par Dieu pour transmettre ses messages au peuple.",
-  "sacrifier": "Offrir quelque chose à Dieu en signe d'obéissance et d'amour.",
-  "temple": "La grande maison de Dieu où le peuple venait prier et adorer.",
-  "péché": "Quand on fait quelque chose que Dieu a dit de ne pas faire. Désobéir à Dieu.",
-  "repentir": "Regretter vraiment ses péchés et décider de changer de chemin pour suivre Dieu.",
-  "foi": "Croire en Dieu même quand on ne le voit pas. C'est lui faire confiance complètement.",
-  "prière": "Parler avec Dieu, comme on parle à un ami très proche et très puissant.",
-  "bénédiction": "Une parole de bonté que Dieu dit sur quelqu'un pour lui apporter sa faveur et sa protection.",
-  "amen": "Un mot hébreu qui veut dire : oui, c'est vrai, je suis d'accord avec ce qui a été dit.",
-  "alléluia": "Un cri de joie en hébreu qui veut dire : louez l'Éternel, adorez Dieu !",
-  "baptême": "Un geste dans l'eau qui montre qu'on veut appartenir à Dieu et commencer une nouvelle vie.",
-  "apôtre": "Les premiers messagers de Jésus, envoyés pour annoncer la bonne nouvelle dans le monde entier.",
-  "évangile": "La bonne nouvelle que Jésus est venu sauver les hommes. C'est aussi le nom des livres de Matthieu, Marc, Luc et Jean.",
-  "thabernacle": "La grande tente que les Israélites portaient dans le désert — c'était la maison de Dieu parmi eux.",
-  "arche": "Un grand coffre en bois recouvert d'or où étaient gardées les tables de la loi de Dieu.",
-  "circoncision": "Un signe dans la chair que Dieu a donné à Abraham pour marquer son alliance avec son peuple.",
-  "jubilé": "Une année spéciale tous les cinquante ans où les dettes étaient annulées et les esclaves libérés.",
-  "lévites": "Les hommes de la tribu de Lévi choisis par Dieu pour s'occuper du temple et du culte.",
-  "pharisiens": "Des chefs religieux du temps de Jésus qui connaissaient très bien la loi mais avaient le cœur dur.",
-  "pharaon": "Le roi de l'Égypte ancienne, considéré comme un dieu par son peuple.",
+  "alliance": "Un accord solennel entre Dieu et son peuple, comme une promesse sacrée.",
+  "sacrificateur": "Un homme choisi pour offrir des sacrifices à Dieu au temple.",
+  "temple": "La maison de Dieu, un lieu saint où le peuple venait l'adorer.",
+  "tabernacle": "La tente sainte que Dieu a demandé à Moïse de construire pour le culte.",
+  "sabbat": "Le septième jour de la semaine, un jour de repos consacré à Dieu.",
+  "baptême": "Entrer dans l'eau pour montrer qu'on commence une nouvelle vie avec Jésus.",
+  "résurrection": "Revenir à la vie après la mort — Jésus est ressuscité le troisième jour.",
+  "évangile": "La bonne nouvelle que Jésus est venu sauver les hommes.",
+  "apôtre": "Un des douze disciples choisis par Jésus pour témoigner de lui.",
+  "disciple": "Une personne qui suit Jésus et apprend de lui.",
+  "esprit": "L'Esprit de Dieu, aussi appelé Esprit Saint, qui habite dans les croyants.",
+  "saint": "Séparé pour Dieu, pur et consacré à lui.",
+  "prière": "Parler avec Dieu, lui dire nos pensées, nos demandes, nos louanges.",
+  "louange": "Célébrer Dieu et le remercier pour tout ce qu'il est.",
+  "amen": "Un mot hébreu qui veut dire : c'est vrai, qu'il en soit ainsi.",
+  "alléluia": "Cri de joie qui veut dire : louez Dieu !",
+  "messie": "Le Sauveur envoyé par Dieu — en grec on dit Christ.",
+  "christ": "Le Sauveur promis par Dieu — c'est Jésus de Nazareth.",
+  "jugement": "Le moment où Dieu examinera la vie de chaque personne.",
+  "enfer": "Le lieu de séparation définitive d'avec Dieu.",
+  "paradis": "Le lieu de bonheur où les croyants seront avec Dieu pour toujours.",
+  "anges": "Des messagers de Dieu, des êtres spirituels qui servent Dieu.",
+  "miséricorde": "La bonté de Dieu qui pardonne et aide ceux qui souffrent.",
+  "gloire": "La grandeur et la lumière de Dieu, sa beauté et sa puissance.",
+  "amen": "Oui, c'est vrai — on dit ce mot à la fin des prières pour confirmer.",
+  "bénédiction": "Une parole de Dieu qui apporte du bien, de la paix et de la joie.",
+  "malédiction": "Une parole qui éloigne de Dieu et apporte du malheur.",
+  "repentance": "Reconnaître ses péchés, en être triste et se tourner vers Dieu.",
+  "pardon": "Dieu efface nos fautes quand nous lui demandons pardon avec sincérité.",
+  "proverbe": "Une parole courte et sage qui enseigne comment bien vivre.",
+  "psaume": "Un chant ou une prière écrite pour louer Dieu.",
+  "berger": "Quelqu'un qui garde les moutons — Dieu est appelé notre berger car il nous garde."
 };
 
-/* ═══════════════════════════════════════
-   4. SYNTHÈSE VOCALE
-═══════════════════════════════════════ */
-let synth = window.speechSynthesis;
-let voices = [];
-let speaking = false;
+// ─── ÉTAT GLOBAL ─────────────────────────────────────────
+let etat = {
+  mode: 'adulte',
+  livreActuel: null,
+  chapitreActuel: null,
+  versets: [],
+  versetIndex: 0,
+  etape: 1, // 1=écoute, 2=mot/mot, 3=quiz syllabe, 4=quiz reco, 5=récompense
+  vitesse: VITESSE_DEFAULT,
+  lectureEnCours: false,
+  motQuizIndex: 0,
+  syllabeQuizMot: '',
+  syllabeQuizBonne: '',
+  recoQuizMot: '',
+  timerRepetition: null,
+  motsRates: [],
+  eleves: JSON.parse(localStorage.getItem('lpa_eleves') || '[]'),
+  eleveActif: null,
+  progression: JSON.parse(localStorage.getItem('lpa_progression') || '{}'),
+};
 
-function loadVoices() {
-  voices = synth.getVoices();
-}
-loadVoices();
-if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices;
+// ─── SPEECH SYNTHESIS ────────────────────────────────────
+let synthVoice = null;
+window.speechSynthesis.onvoiceschanged = () => {
+  const voices = window.speechSynthesis.getVoices();
+  synthVoice = voices.find(v => v.lang === 'fr-FR') ||
+               voices.find(v => v.lang.startsWith('fr')) ||
+               voices[0] || null;
+};
+// Appel initial pour déclencher le chargement
+setTimeout(() => {
+  const v = window.speechSynthesis.getVoices();
+  if (v.length) {
+    synthVoice = v.find(v => v.lang === 'fr-FR') || v.find(v => v.lang.startsWith('fr')) || v[0];
+  }
+}, 100);
 
-function getBestVoice() {
-  const fr = voices.filter(v => v.lang.startsWith('fr'));
-  return fr.find(v => v.name.includes('Google')) || fr[0] || null;
-}
+function dire(texte, rate, onEnd) {
+  if (!texte) return;
+  window.speechSynthesis.cancel();
+  clearTimeout(etat.timerRepetition);
 
-function speak(text, onEnd, rate) {
-  synth.cancel();
-  clearAutoRepeat();
-  if (!text) return;
-  APP.lastAudioText = text;
-  const utter = new SpeechSynthesisUtterance(text);
+  const utter = new SpeechSynthesisUtterance(texte);
   utter.lang = 'fr-FR';
-  utter.rate = rate !== undefined ? rate : APP.speechRate;
-  utter.pitch = APP.mode === 'enfant' ? 1.15 : 1.0;
-  const v = getBestVoice();
-  if (v) utter.voice = v;
-  showVoiceIndicator(text.slice(0, 30));
-  speaking = true;
+  utter.rate = rate || etat.vitesse;
+  if (synthVoice) utter.voice = synthVoice;
+
+  // Indicateur audio
+  const ind = document.getElementById('audioIndicator');
+  const txt = document.getElementById('audioText');
+  if (ind && txt) {
+    ind.classList.add('visible');
+    const court = texte.length > 40 ? texte.substring(0, 40) + '…' : texte;
+    txt.textContent = court;
+  }
+
   utter.onend = () => {
-    speaking = false;
-    hideVoiceIndicator();
+    if (ind) ind.classList.remove('visible');
     if (onEnd) onEnd();
-    scheduleAutoRepeat();
   };
   utter.onerror = () => {
-    speaking = false;
-    hideVoiceIndicator();
-    if (onEnd) onEnd();
+    if (ind) ind.classList.remove('visible');
   };
-  synth.speak(utter);
+
+  window.speechSynthesis.speak(utter);
 }
 
-function speakSequence(texts, delay, onAllDone) {
-  if (!texts || texts.length === 0) { if (onAllDone) onAllDone(); return; }
-  const [first, ...rest] = texts;
-  speak(first, () => {
-    if (rest.length > 0) setTimeout(() => speakSequence(rest, delay, onAllDone), delay || 400);
-    else if (onAllDone) onAllDone();
-  });
+function direLent(texte, onEnd) {
+  dire(texte, etat.mode === 'enfant' ? 0.65 : 0.75, onEnd);
 }
 
-function repeatCurrentAudio() {
-  if (APP.lastAudioText) speak(APP.lastAudioText);
+function programmerRepetition(texte) {
+  clearTimeout(etat.timerRepetition);
+  etat.timerRepetition = setTimeout(() => {
+    dire(texte, null, () => programmerRepetition(texte));
+  }, DELAI_REPETITION);
 }
 
-function setSpeed(rate) {
-  APP.speechRate = rate;
-  document.getElementById('speed-slow').classList.toggle('active', rate <= 0.65);
-  document.getElementById('speed-normal').classList.toggle('active', rate > 0.65);
-}
-
-/* ═══════════════════════════════════════
-   5. INDICATEURS VISUELS
-═══════════════════════════════════════ */
-function showVoiceIndicator(text) {
-  const el = document.getElementById('voice-indicator');
-  document.getElementById('voice-text').textContent = text || 'Lecture…';
-  el.classList.add('visible');
-}
-function hideVoiceIndicator() {
-  document.getElementById('voice-indicator').classList.remove('visible');
-}
-
-function scheduleAutoRepeat() {
-  if (APP.currentScreen !== 'lecture' && APP.currentScreen !== 'quiz') return;
-  clearAutoRepeat();
-  APP.autoRepeatTimer = setTimeout(() => {
-    const el = document.getElementById('auto-repeat-indicator');
-    el.classList.add('visible');
-    setTimeout(() => {
-      el.classList.remove('visible');
-      repeatCurrentAudio();
-    }, 1500);
-  }, 5000);
-}
-
-function clearAutoRepeat() {
-  if (APP.autoRepeatTimer) { clearTimeout(APP.autoRepeatTimer); APP.autoRepeatTimer = null; }
-  document.getElementById('auto-repeat-indicator').classList.remove('visible');
-}
-
-/* ═══════════════════════════════════════
-   6. NAVIGATION ENTRE ÉCRANS
-═══════════════════════════════════════ */
-function showScreen(name) {
+// ─── NAVIGATION ÉCRANS ───────────────────────────────────
+function afficherEcran(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const target = document.getElementById('screen-' + name);
-  if (target) {
-    target.classList.add('active');
-    APP.currentScreen = name;
-    clearAutoRepeat();
-    window.scrollTo(0, 0);
-    setTimeout(() => announceScreen(name), 300);
+  const sc = document.getElementById('screen-' + id);
+  if (sc) {
+    sc.classList.add('active');
+    sc.scrollTop = 0;
   }
 }
 
-const SCREEN_ANNOUNCEMENTS = {
-  home: "Bienvenue. Choisissez votre mode d'apprentissage.",
-  bible: "Choisissez un livre de la Bible.",
-  lecture: "Voici votre verset. Touchez écouter pour entendre la Parole.",
-  quiz: "Quiz ! Touche la bonne syllabe.",
-  celebration: "Bravo ! Tu as réussi ce verset !",
-  pasteur: "Tableau de suivi de la progression.",
-};
-
-function announceScreen(name) {
-  const msg = SCREEN_ANNOUNCEMENTS[name];
-  if (msg) speak(msg);
-}
-
-function selectMode(mode) {
-  APP.mode = mode;
-  APP.speechRate = mode === 'enfant' ? 0.7 : 0.85;
-  document.getElementById('speed-slow').classList.toggle('active', mode === 'enfant');
-  document.getElementById('speed-normal').classList.toggle('active', mode === 'adulte');
-  speak(`Mode ${mode === 'enfant' ? 'enfant' : 'adulte'} activé. Choisissons un livre de la Bible.`, () => {
-    showScreen('bible');
-    renderBookList();
-  });
-}
-
-/* ═══════════════════════════════════════
-   7. CHARGEMENT API BIBLE
-═══════════════════════════════════════ */
-function cleanVerseText(t) {
-  return (t || '').replace(/¶/g, '').replace(/\s+/g, ' ').trim();
-}
-
-async function loadBook(bookNum) {
-  if (APP.bibleCache[bookNum]) return APP.bibleCache[bookNum];
-  const lsKey = `lsg_book_${bookNum}`;
-  const cached = localStorage.getItem(lsKey);
-  if (cached) {
-    try {
-      const data = JSON.parse(cached);
-      APP.bibleCache[bookNum] = data;
-      return data;
-    } catch(e) {}
-  }
-  // Fetch depuis API
-  const url = `https://api.getbible.net/v2/lsg/${bookNum}.json`;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('API error');
-    const raw = await res.json();
-    // Normaliser : chapters[n] = [{v, t}]
-    const chapters = {};
-    for (const [cNum, cData] of Object.entries(raw.chapters || {})) {
-      chapters[parseInt(cNum)] = Object.values(cData.verses || {}).map(v => ({
-        v: v.verse,
-        t: cleanVerseText(v.text)
-      }));
-    }
-    const data = { name: BOOKS[bookNum-1].name, chapters };
-    APP.bibleCache[bookNum] = data;
-    localStorage.setItem(lsKey, JSON.stringify(data));
-    return data;
-  } catch(e) {
-    console.error('Load failed:', bookNum, e);
-    return null;
-  }
-}
-
-/* Pré-chargement hors-ligne : charge tous les livres en arrière-plan */
-async function preloadAllBooks() {
-  const total = 66;
-  let loaded = 0;
-  const bar = document.getElementById('offline-bar');
-  const fill = document.getElementById('offline-progress-fill');
-  const sub = document.getElementById('offline-bar-sub');
-
-  // Vérifier combien sont déjà en cache
-  let alreadyCached = 0;
-  for (let i = 1; i <= 66; i++) {
-    if (localStorage.getItem(`lsg_book_${i}`)) alreadyCached++;
-  }
-  if (alreadyCached >= 66) return; // Tout est déjà en cache
-
-  bar.classList.add('visible');
-  document.querySelectorAll('.screen')[0].style.paddingTop = '80px';
-
-  for (let i = 1; i <= total; i++) {
-    if (localStorage.getItem(`lsg_book_${i}`)) {
-      loaded++;
-    } else {
-      await loadBook(i);
-      loaded++;
-    }
-    const pct = Math.round((loaded / total) * 100);
-    fill.style.width = pct + '%';
-    sub.textContent = `Chargement : ${BOOKS[i-1]?.name || ''} (${pct}%)`;
-    await new Promise(r => setTimeout(r, 30));
-  }
-
-  bar.classList.remove('visible');
-  document.querySelectorAll('.screen')[0].style.paddingTop = '';
-  document.getElementById('offline-bar-sub').textContent = 'Bible disponible hors ligne ✓';
-}
-
-/* ═══════════════════════════════════════
-   8. AFFICHAGE LISTE DE LIVRES
-═══════════════════════════════════════ */
-function renderBookList() {
-  const container = document.getElementById('bible-content');
-  document.getElementById('bible-header-title').textContent = '📖 Choisir un livre';
-  document.getElementById('bible-header-sub').textContent = 'Bible Louis Segond 1910';
-
-  const ot = BOOKS.filter(b => b.n <= 39);
-  const nt = BOOKS.filter(b => b.n >= 40);
-
-  let html = `
-    <div class="bible-section">
-      <div class="section-title">📜 Ancien Testament</div>
-      <div class="books-grid">
-        ${ot.map(b => `
-          <button class="book-btn" onclick="selectBook(${b.n})">
-            <span class="book-abbr">${b.abbr}</span>
-            ${b.name}
-          </button>
-        `).join('')}
-      </div>
-    </div>
-    <div class="bible-section" style="margin-top:8px;">
-      <div class="section-title">✝️ Nouveau Testament</div>
-      <div class="books-grid">
-        ${nt.map(b => `
-          <button class="book-btn" onclick="selectBook(${b.n})">
-            <span class="book-abbr">${b.abbr}</span>
-            ${b.name}
-          </button>
-        `).join('')}
-      </div>
-    </div>
-  `;
-  container.innerHTML = html;
-}
-
-async function selectBook(bookNum) {
-  const book = BOOKS[bookNum - 1];
-  speak(`Livre de ${book.name}. Choisissez un chapitre.`);
-  APP.currentBook = book;
-
-  // Afficher spinner
-  const container = document.getElementById('bible-content');
-  container.innerHTML = `<div class="loading-text"><div class="loading-spinner"></div>Chargement de ${book.name}…</div>`;
-  document.getElementById('bible-header-title').textContent = `📖 ${book.name}`;
-
-  const data = await loadBook(bookNum);
-  APP.bibleCache[bookNum] = data;
-
-  // Afficher chapitres
-  const chapterCount = book.chapters;
-  let html = `
-    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px 4px;">
-      <button style="background:var(--violet-pale);border:none;border-radius:10px;padding:8px 14px;font-size:14px;color:var(--violet);font-weight:600;cursor:pointer;" onclick="renderBookList()">← Livres</button>
-      <span style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--violet-dark);">${book.name}</span>
-    </div>
-    <div class="bible-section">
-      <div class="section-title">Choisir un chapitre</div>
-      <div class="chapters-grid">
-  `;
-  for (let c = 1; c <= chapterCount; c++) {
-    const done = isChapterDone(bookNum, c) ? ' done' : '';
-    html += `<button class="chapter-btn${done}" onclick="selectChapter(${bookNum}, ${c})">${c}</button>`;
-  }
-  html += `</div></div>`;
-  container.innerHTML = html;
-  container.scrollTop = 0;
-}
-
-function isChapterDone(bookNum, chapterNum) {
-  const prog = JSON.parse(localStorage.getItem('progress') || '{}');
-  return !!(prog[`${bookNum}_${chapterNum}`]);
-}
-
-async function selectChapter(bookNum, chapterNum) {
-  const book = BOOKS[bookNum - 1];
-  speak(`Chapitre ${chapterNum} de ${book.name}.`);
-  APP.currentChapterNum = chapterNum;
-
-  const data = await loadBook(bookNum);
-  if (!data || !data.chapters[chapterNum]) {
-    speak('Ce chapitre n\'est pas disponible. Vérifie ta connexion internet.');
-    return;
-  }
-  APP.currentChapter = data.chapters[chapterNum];
-  APP.currentVerseIdx = 0;
-  APP.currentBook = book;
-
-  showScreen('lecture');
-  loadVerse(0);
-}
-
-/* ═══════════════════════════════════════
-   9. AFFICHAGE ET LECTURE DE VERSET
-═══════════════════════════════════════ */
-function loadVerse(idx) {
-  if (!APP.currentChapter || idx < 0 || idx >= APP.currentChapter.length) return;
-  APP.currentVerseIdx = idx;
-  const verse = APP.currentChapter[idx];
-  const book = APP.currentBook;
-
-  document.getElementById('lecture-header-title').textContent =
-    `${book.name} ${APP.currentChapterNum}`;
-  document.getElementById('lecture-header-sub').textContent =
-    `Verset ${verse.v} sur ${APP.currentChapter.length}`;
-  document.getElementById('verse-ref').textContent =
-    `${book.name} ${APP.currentChapterNum}:${verse.v}`;
-
-  resetStepIndicator();
-  renderVerseWords(verse.t);
-
-  // Lire automatiquement 3x
-  speak(`Verset ${verse.v}. ${verse.t}`, () => {
-    setTimeout(() => speak(verse.t, () => {
-      setTimeout(() => speak(verse.t), 600);
-    }), 600);
-  });
-}
-
-function renderVerseWords(text) {
-  const words = text.split(/\s+/).filter(w => w.length > 0);
-  APP.currentVerseWords = words;
-  const container = document.getElementById('verse-text-display');
-  container.innerHTML = words.map((w, i) => {
-    const clean = w.replace(/[.,;:!?«»"'()\-]/g, '').toLowerCase();
-    return `<span class="verse-word" id="word-${i}" onclick="onWordTap(${i}, '${encodeURIComponent(w)}')">${w} </span>`;
-  }).join('');
-}
-
-function onWordTap(idx, encodedWord) {
-  clearAutoRepeat();
-  const word = decodeURIComponent(encodedWord);
-  const clean = word.replace(/[.,;:!?«»"'()\-]/g, '').toLowerCase();
-
-  // Highlight
-  document.querySelectorAll('.verse-word').forEach(el => el.classList.remove('word-highlight'));
-  const el = document.getElementById(`word-${idx}`);
-  if (el) el.classList.add('word-highlight');
-
-  // Chercher définition
-  const defKey = Object.keys(DEFINITIONS).find(k => clean.startsWith(k) || k.startsWith(clean));
-  if (defKey) {
-    showDefPopup(word, DEFINITIONS[defKey]);
-    speak(`${word}. ${DEFINITIONS[defKey]}`);
-  } else {
-    speak(word);
-  }
-
-  // Marquer comme vu
+function allerAccueil() {
+  window.speechSynthesis.cancel();
+  clearTimeout(etat.timerRepetition);
+  afficherEcran('accueil');
   setTimeout(() => {
-    if (el) el.classList.remove('word-highlight');
-  }, 1500);
+    dire("Bienvenue ! Touche Enfant ou Adulte pour commencer.");
+  }, 500);
 }
 
-function showDefPopup(word, def) {
-  document.getElementById('def-popup-word').textContent = word;
-  document.getElementById('def-popup-def').textContent = def;
-  document.getElementById('def-popup').classList.add('visible');
-  document.getElementById('def-overlay').classList.add('visible');
+function choisirMode(mode) {
+  etat.mode = mode;
+  document.body.className = mode === 'enfant' ? 'mode-enfant' : '';
+  etat.vitesse = mode === 'enfant' ? 0.7 : 0.85;
+  document.getElementById('vitesseSlider').value = etat.vitesse;
+  document.getElementById('vitesseVal').textContent = etat.vitesse;
+  afficherLivres();
 }
 
-function closeDefPopup() {
-  document.getElementById('def-popup').classList.remove('visible');
-  document.getElementById('def-overlay').classList.remove('visible');
-}
+// ─── LIVRES ──────────────────────────────────────────────
+function afficherLivres() {
+  afficherEcran('livres');
+  const gA = document.getElementById('grid-ancien');
+  const gN = document.getElementById('grid-nouveau');
+  gA.innerHTML = '';
+  gN.innerHTML = '';
 
-/* ═══════════════════════════════════════
-   10. LECTURE MOT PAR MOT avec HIGHLIGHT
-═══════════════════════════════════════ */
-function readVerseAloud() {
-  clearAutoRepeat();
-  if (!APP.currentChapter) return;
-  const verse = APP.currentChapter[APP.currentVerseIdx];
-  speak(verse.t);
-  setStepDot(1);
-}
+  LIVRES.forEach(l => {
+    const prog = etat.progression[l.n] || {};
+    const chapTotal = l.chap;
+    const chapFaits = Object.keys(prog).length;
+    const fini = chapFaits >= chapTotal;
 
-function readWordByWord() {
-  clearAutoRepeat();
-  if (!APP.currentVerseWords.length) return;
-  setStepDot(2);
-  speak('Écoute chaque mot et regarde l\'écran.', () => {
-    animateWordByWord(0);
+    const btn = document.createElement('button');
+    btn.className = 'livre-btn' + (fini ? ' completed' : '');
+    btn.innerHTML = `<div>${l.abr}</div><div style="font-size:0.65rem;opacity:0.75">${l.nom.substring(0,10)}</div>`;
+    btn.onclick = () => choisirLivre(l);
+    (l.n <= 39 ? gA : gN).appendChild(btn);
   });
-}
 
-function animateWordByWord(idx) {
-  if (idx >= APP.currentVerseWords.length) {
-    setStepDot(3);
-    speak('Maintenant, essayons le quiz !');
-    return;
-  }
-  const word = APP.currentVerseWords[idx];
-  const clean = word.replace(/[.,;:!?«»"'()\-]/g, '');
-
-  // Highlight mot courant
-  document.querySelectorAll('.verse-word').forEach(el => el.classList.remove('word-highlight'));
-  const el = document.getElementById(`word-${idx}`);
-  if (el) {
-    el.classList.add('word-highlight');
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    // Afficher syllabes dans le mot
-    const sylls = syllabify(clean);
-    el.innerHTML = sylls.map((s, si) => `<span class="syl" id="syl-${idx}-${si}">${s}</span>`).join('<span style="color:var(--violet-light)">·</span>') + ' ';
-
-    // Animer syllabes pendant la lecture
-    animateSyllablesOnWord(idx, sylls, clean, () => {
-      if (el) {
-        el.innerHTML = word + ' ';
-        el.classList.remove('word-highlight');
-        el.classList.add('word-learned');
-      }
-      setTimeout(() => animateWordByWord(idx + 1), 200);
-    });
-  } else {
-    speak(clean, () => animateWordByWord(idx + 1));
-  }
-}
-
-function animateSyllablesOnWord(wordIdx, sylls, word, onDone) {
-  if (sylls.length === 0) { speak(word, onDone); return; }
-
-  // Construire le texte à lire avec des pauses entre syllabes
-  let sylIdx = 0;
-  function nextSyl() {
-    if (sylIdx >= sylls.length) {
-      // Relire le mot entier après les syllabes
-      const el = document.getElementById(`word-${wordIdx}`);
-      if (el) {
-        el.querySelectorAll('.syl').forEach(s => {
-          s.classList.remove('syl-active');
-          s.classList.add('syl-done');
-        });
-      }
-      speak(word, onDone, APP.speechRate * 0.9);
-      return;
-    }
-    const sylEl = document.getElementById(`syl-${wordIdx}-${sylIdx}`);
-    if (sylEl) {
-      document.querySelectorAll(`[id^="syl-${wordIdx}-"]`).forEach(s => s.classList.remove('syl-active'));
-      sylEl.classList.add('syl-active');
-    }
-    speak(sylls[sylIdx], () => {
-      sylIdx++;
-      setTimeout(nextSyl, 150);
-    }, APP.speechRate * 0.75);
-  }
-  nextSyl();
-}
-
-/* ═══════════════════════════════════════
-   11. SYLLABIFICATION
-═══════════════════════════════════════ */
-function syllabify(word) {
-  word = word.toLowerCase().replace(/[^a-zàâäéèêëîïôùûüçœæ'-]/g, '');
-  if (word.length <= 3) return [word];
-
-  const VOWELS = 'aeiouyàâäéèêëîïôùûüœæ';
-  const isVowel = c => VOWELS.includes(c);
-  const DIGRAPHS = ['ch','ph','th','gn','qu','br','cr','dr','fr','gr','pr','tr','vr','bl','cl','fl','gl','pl','sc','sk','sl','sm','sn','sp','st','sw'];
-
-  let syllables = [];
-  let current = '';
-  let i = 0;
-  const chars = [...word];
-
-  while (i < chars.length) {
-    const c = chars[i];
-    const next = chars[i+1] || '';
-    const twoChar = c + next;
-
-    // Garder les digrammes ensemble
-    if (DIGRAPHS.includes(twoChar)) {
-      if (current.length > 0 && isVowel(current[current.length-1]) && !isVowel(c)) {
-        syllables.push(current);
-        current = twoChar;
-        i += 2;
-      } else {
-        current += twoChar;
-        i += 2;
-      }
-      continue;
-    }
-
-    // Règle voyelle-consonne-voyelle : couper avant la consonne
-    if (isVowel(c) && current.length > 0) {
-      const prevC = current[current.length-1];
-      if (!isVowel(prevC) && current.length >= 2) {
-        syllables.push(current);
-        current = c;
-        i++;
-        continue;
-      }
-    }
-
-    // Règle double consonne : couper entre les deux
-    if (!isVowel(c) && !isVowel(next) && next && current.length > 1 && isVowel(current[current.length-1])) {
-      current += c;
-      syllables.push(current);
-      current = '';
-      i++;
-      continue;
-    }
-
-    current += c;
-    i++;
-  }
-  if (current) syllables.push(current);
-
-  // Fusionner les syllabes trop courtes (1 caractère seul)
-  const merged = [];
-  for (let j = 0; j < syllables.length; j++) {
-    if (syllables[j].length === 1 && merged.length > 0) {
-      merged[merged.length-1] += syllables[j];
-    } else {
-      merged.push(syllables[j]);
-    }
-  }
-
-  return merged.length > 0 ? merged : [word];
-}
-
-/* ═══════════════════════════════════════
-   12. QUIZ SYLLABATION
-═══════════════════════════════════════ */
-function startQuiz() {
-  clearAutoRepeat();
-  if (!APP.currentVerseWords || APP.currentVerseWords.length === 0) {
-    speak('Écoute d\'abord le verset.');
-    return;
-  }
-
-  // Sélectionner des mots significatifs (longueur > 3)
-  const words = APP.currentVerseWords
-    .map(w => w.replace(/[.,;:!?«»"'()\-]/g, ''))
-    .filter(w => w.length > 3);
-
-  if (words.length === 0) { speak('Ce verset est trop court pour un quiz.'); return; }
-
-  APP.quizWords = [...new Set(words)].slice(0, Math.min(6, words.length));
-  APP.quizIdx = 0;
-  APP.quizScore = 0;
-
-  showScreen('quiz');
-  document.getElementById('quiz-header-sub').textContent =
-    `${APP.currentBook.name} ${APP.currentChapterNum}:${APP.currentChapter[APP.currentVerseIdx].v}`;
-  updateQuizProgress();
-  loadQuizWord();
-}
-
-function loadQuizWord() {
-  if (APP.quizIdx >= APP.quizWords.length) {
-    finishQuiz();
-    return;
-  }
-
-  const word = APP.quizWords[APP.quizIdx];
-  const sylls = syllabify(word);
-
-  document.getElementById('quiz-word-text').textContent = word;
-  document.getElementById('quiz-syllables-display').textContent = '';
-  document.getElementById('btn-quiz-next').classList.add('hidden');
-  document.getElementById('quiz-question-text').textContent = 'Touche la bonne syllabe :';
-
-  // Choisir une syllabe cible aléatoire
-  const targetIdx = Math.floor(Math.random() * sylls.length);
-  const targetSyl = sylls[targetIdx];
-
-  // Générer des distracteurs (autres syllabes du verset)
-  const allWords = APP.currentVerseWords.map(w => w.replace(/[.,;:!?«»"'()\-]/g, ''));
-  const allSylls = [...new Set(allWords.flatMap(w => syllabify(w)))].filter(s => s !== targetSyl && s.length > 1);
-  const distractors = shuffle(allSylls).slice(0, 2);
-  while (distractors.length < 2) distractors.push(randomSyllable());
-
-  const options = shuffle([targetSyl, ...distractors]);
-
-  // Afficher
-  const optContainer = document.getElementById('quiz-options');
-  optContainer.innerHTML = options.map((opt, i) =>
-    `<button class="quiz-option" onclick="checkSyllable(this, '${encodeURIComponent(opt)}', '${encodeURIComponent(targetSyl)}')">${opt}</button>`
-  ).join('');
-
-  // Question vocale
   setTimeout(() => {
-    speak(`Comment s'écrit ce mot ? ${word}. Touche la syllabe : ${targetSyl}`, null, APP.speechRate * 0.85);
+    dire("Touche un livre de la Bible pour choisir.");
+  }, 400);
+}
+
+// ─── CHAPITRES ────────────────────────────────────────────
+// Priorité 1 : bibleData (segond_1910.json chargé au démarrage) — INSTANTANÉ
+// Priorité 2 : localStorage cache (ancien chapitre déjà téléchargé)
+// Priorité 3 : API getbible /v2/lsg/{book}/{chap}.json — nécessite internet
+
+async function choisirLivre(livre) {
+  etat.livreActuel = livre;
+  afficherEcran('chapitres');
+  document.getElementById('header-livre').textContent = '📖 ' + livre.nom;
+
+  const grid = document.getElementById('grid-chapitres');
+  grid.innerHTML = '';
+  const prog = etat.progression[livre.n] || {};
+
+  // Si la Bible complète est chargée en mémoire, tous les chapitres sont dispo
+  const bibliqueDisponible = bibleChargee && bibleData && bibleData[livre.n];
+
+  for (let c = 1; c <= livre.chap; c++) {
+    const fini = prog[c] && prog[c].fini;
+    const dispo = bibliqueDisponible || localStorage.getItem(CACHE_PREFIX + livre.n + '_' + c);
+    const btn = document.createElement('button');
+    btn.className = 'chap-btn' + (fini ? ' completed' : '');
+    btn.id = 'chap-btn-' + c;
+    // Petite icône téléchargement si pas encore dispo
+    btn.innerHTML = dispo ? String(c) : c + '<span style="font-size:0.5rem;display:block;opacity:0.55">⬇</span>';
+    const chapNum = c;
+    btn.onclick = () => ouvrirChapitre(livre, chapNum);
+    grid.appendChild(btn);
+  }
+
+  setTimeout(() => {
+    dire('Livre de ' + livre.nom + '. Touche un numéro pour choisir le chapitre.');
   }, 300);
 }
 
-function checkSyllable(btn, encodedAnswer, encodedTarget) {
-  const answer = decodeURIComponent(encodedAnswer);
-  const target = decodeURIComponent(encodedTarget);
+function afficherChapitres() {
+  if (etat.livreActuel) choisirLivre(etat.livreActuel);
+}
 
-  // Désactiver toutes les options
-  document.querySelectorAll('.quiz-option').forEach(b => b.classList.add('disabled'));
-
-  const correct = answer === target;
-  btn.classList.add(correct ? 'correct' : 'wrong');
-
-  // Montrer la bonne réponse si faux
-  if (!correct) {
-    document.querySelectorAll('.quiz-option').forEach(b => {
-      if (decodeURIComponent(b.getAttribute('onclick').match(/'([^']+)',\s*'[^']+'\)$/)?.[1] || '') === target ||
-          b.textContent === target) {
-        b.classList.add('correct');
-      }
-    });
+// Point d'entrée unique pour ouvrir un chapitre
+async function ouvrirChapitre(livre, numChapitre) {
+  // 1. Bible complète en mémoire ?
+  if (bibleChargee && bibleData && bibleData[livre.n] && bibleData[livre.n][numChapitre]) {
+    const versetsData = bibleData[livre.n][numChapitre]; // {1:"texte", 2:"texte", ...}
+    chargerChapitre(livre, numChapitre, versetsData);
+    return;
   }
 
-  // Mettre à jour syllabe affichée
-  const word = APP.quizWords[APP.quizIdx];
-  const sylls = syllabify(word);
-  document.getElementById('quiz-syllables-display').textContent = sylls.join(' · ');
-
-  if (correct) {
-    APP.quizScore++;
-    const msgs = APP.mode === 'enfant'
-      ? ['Super ! Bravo !', 'Excellent ! Tu es fort !', 'Magnifique !']
-      : ['Très bien !', 'Exact !', 'Parfait !'];
-    speak(msgs[Math.floor(Math.random() * msgs.length)], null, 1.0);
-  } else {
-    speak(`Essaie encore. La bonne syllabe était : ${target}.`);
+  // 2. Cache localStorage ?
+  const cacheKey = CACHE_PREFIX + livre.n + '_' + numChapitre;
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    chargerChapitre(livre, numChapitre, JSON.parse(cached));
+    return;
   }
 
-  updateQuizProgress();
-  document.getElementById('btn-quiz-next').classList.remove('hidden');
+  // 3. Fallback : API getbible (nécessite internet)
+  afficherEcranLecture_Chargement(livre, numChapitre);
+  dire('Je télécharge ' + livre.nom + ' chapitre ' + numChapitre + '. Un instant.');
 
-  if (APP.quizIdx === APP.quizWords.length - 1) {
-    document.getElementById('btn-quiz-next').querySelector('span:last-child').textContent = 'Voir le résultat';
-  }
-}
+  try {
+    const url = API_BASE + livre.n + '/' + numChapitre + '.json';
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
 
-function nextQuizWord() {
-  APP.quizIdx++;
-  loadQuizWord();
-}
+    // Structure API : { verses: { "1": {verse, text}, "2": {...}, ... } }
+    const versetsData = {};
+    if (data.verses) {
+      Object.values(data.verses).forEach(v => {
+        versetsData[v.verse] = nettoyerTexte(v.text || '');
+      });
+    } else {
+      throw new Error('Format API inattendu');
+    }
 
-function updateQuizProgress() {
-  const total = APP.quizWords.length;
-  const pct = total > 0 ? Math.round((APP.quizIdx / total) * 100) : 0;
-  document.getElementById('quiz-progress-fill').style.width = pct + '%';
-  document.getElementById('quiz-score-display').textContent = `${APP.quizScore} / ${APP.quizIdx}`;
-}
+    localStorage.setItem(cacheKey, JSON.stringify(versetsData));
+    chargerChapitre(livre, numChapitre, versetsData);
 
-function finishQuiz() {
-  const score = APP.quizScore;
-  const total = APP.quizWords.length;
-  const pct = total > 0 ? Math.round((score / total) * 100) : 0;
-
-  // Sauvegarder progression
-  saveProgress(APP.currentBook.n, APP.currentChapterNum, APP.currentVerseIdx, score, total);
-
-  // Célébration
-  const stars = pct >= 80 ? '⭐⭐⭐' : pct >= 50 ? '⭐⭐' : '⭐';
-  const titles = pct >= 80 ? ['Excellent !', 'Bravo !', 'Magnifique !'] : pct >= 50 ? ['Bien joué !', 'Continue !'] : ['Essaie encore !'];
-  const texts = pct >= 80
-    ? `Tu as réussi ${score} mot${score>1?'s':''} sur ${total}.\nTu lis très bien !`
-    : `${score} mot${score>1?'s':''} sur ${total}.\nContinue à t'entraîner !`;
-
-  document.getElementById('celebration-stars').textContent = stars;
-  document.getElementById('celebration-title').textContent = titles[Math.floor(Math.random() * titles.length)];
-  document.getElementById('celebration-text').textContent = texts;
-
-  showScreen('celebration');
-  launchConfetti(pct);
-
-  const msg = pct >= 80
-    ? `Félicitations ! Tu as réussi ${score} mots sur ${total}. Tu progresses dans la Parole de Dieu !`
-    : `Tu as réussi ${score} mots sur ${total}. Continue à pratiquer !`;
-  setTimeout(() => speak(msg), 500);
-}
-
-function continueLearning() {
-  nextVerse();
-  showScreen('lecture');
-}
-
-/* ═══════════════════════════════════════
-   13. NAVIGATION VERSETS
-═══════════════════════════════════════ */
-function nextVerse() {
-  clearAutoRepeat();
-  if (!APP.currentChapter) return;
-  if (APP.currentVerseIdx < APP.currentChapter.length - 1) {
-    loadVerse(APP.currentVerseIdx + 1);
-  } else {
-    speak('Fin du chapitre. Bravo, tu as tout lu !');
-    markChapterDone(APP.currentBook.n, APP.currentChapterNum);
-    setTimeout(() => showScreen('bible'), 2000);
+  } catch(e) {
+    console.error('Erreur API chapitre:', e);
+    document.getElementById('verset-texte').innerHTML =
+      '<div style="text-align:center;padding:24px">' +
+        '<div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>' +
+        '<div style="color:#c0392b;font-weight:600">Pas de connexion internet</div>' +
+        '<div style="font-size:0.85rem;color:#666;margin-top:8px;line-height:1.5">La Bible complète n'a pas pu être chargée.<br>Connecte-toi à internet et réessaie.</div>' +
+        '<button class="btn btn-primary" style="margin-top:16px" onclick="ouvrirChapitre(etat.livreActuel,' + numChapitre + ')">🔄 Réessayer</button>' +
+        '<button class="btn btn-secondary" style="margin-top:8px" onclick="afficherChapitres()">← Retour</button>' +
+      '</div>';
+    dire('Connexion internet nécessaire. Réessaie.');
   }
 }
 
-function prevVerse() {
-  clearAutoRepeat();
-  if (APP.currentVerseIdx > 0) loadVerse(APP.currentVerseIdx - 1);
-}
-
-function backFromLecture() {
-  clearAutoRepeat();
-  synth.cancel();
-  showScreen('bible');
-  selectBook(APP.currentBook.n);
-}
-
-/* ═══════════════════════════════════════
-   14. ÉTAPES PÉDAGOGIQUES
-═══════════════════════════════════════ */
-function resetStepIndicator() {
-  for (let i = 1; i <= 4; i++) {
-    const dot = document.getElementById(`dot-${i}`);
-    if (dot) { dot.classList.remove('active', 'done'); }
-  }
-  document.getElementById('dot-1').classList.add('active');
-  document.getElementById('step-label').textContent = 'Écoute du verset';
-}
-
-function setStepDot(step) {
-  for (let i = 1; i <= 4; i++) {
-    const dot = document.getElementById(`dot-${i}`);
-    if (!dot) continue;
-    dot.classList.remove('active', 'done');
-    if (i < step) dot.classList.add('done');
-    else if (i === step) dot.classList.add('active');
-  }
-  const labels = ['', 'Écoute du verset', 'Mot par mot', 'Quiz syllabation', 'Révisión'];
-  const lbl = document.getElementById('step-label');
-  if (lbl && labels[step]) lbl.textContent = labels[step];
-}
-
-/* ═══════════════════════════════════════
-   15. PROGRESSION & STOCKAGE
-═══════════════════════════════════════ */
-function saveProgress(bookNum, chapterNum, verseIdx, score, total) {
-  const prog = JSON.parse(localStorage.getItem('progress') || '{}');
-  const key = `${bookNum}_${chapterNum}`;
-  if (!prog[key]) prog[key] = { verses: {}, completed: false };
-  prog[key].verses[verseIdx] = { score, total, date: Date.now() };
-  localStorage.setItem('progress', JSON.stringify(prog));
-
-  // Activité pasteur
-  const today = new Date().toISOString().split('T')[0];
-  const activity = JSON.parse(localStorage.getItem('activity') || '{}');
-  if (!activity[today]) activity[today] = 0;
-  activity[today]++;
-  localStorage.setItem('activity', JSON.stringify(activity));
-}
-
-function markChapterDone(bookNum, chapterNum) {
-  const prog = JSON.parse(localStorage.getItem('progress') || '{}');
-  const key = `${bookNum}_${chapterNum}`;
-  if (!prog[key]) prog[key] = { verses: {}, completed: false };
-  prog[key].completed = true;
-  localStorage.setItem('progress', JSON.stringify(prog));
-}
-
-/* ═══════════════════════════════════════
-   16. TABLEAU PASTEUR
-═══════════════════════════════════════ */
-function renderPasteurDashboard() {
-  const prog = JSON.parse(localStorage.getItem('progress') || '{}');
-  const activity = JSON.parse(localStorage.getItem('activity') || '{}');
-
-  const totalVerses = Object.values(prog).reduce((sum, ch) => sum + Object.keys(ch.verses || {}).length, 0);
-  const totalChapters = Object.keys(prog).length;
-  const daysActive = Object.keys(activity).length;
-
-  // Scores moyens
-  let totalScore = 0, totalAttempts = 0;
-  Object.values(prog).forEach(ch => {
-    Object.values(ch.verses || {}).forEach(v => {
-      totalScore += v.score || 0;
-      totalAttempts += v.total || 1;
-    });
+function afficherEcranLecture_Chargement(livre, numChapitre) {
+  afficherEcran('lecture');
+  document.getElementById('header-lecture').textContent = '📖 ' + livre.nom + ' ' + numChapitre;
+  document.getElementById('verset-texte').innerHTML =
+    '<div style="text-align:center;padding:30px">' +
+      '<div class="loading-spinner" style="margin:0 auto 16px"></div>' +
+      '<div style="color:var(--violet);font-weight:600">Téléchargement...</div>' +
+      '<div style="font-size:0.85rem;color:#999;margin-top:6px">' + livre.nom + ' chapitre ' + numChapitre + '</div>' +
+    '</div>';
+  ['etape-badge','etape-instructions'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent=''; });
+  ['controles-ecoute','controles-etapes','quiz-syllabe-zone','quiz-reco-zone','recompense-zone'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.style.display='none';
   });
-  const avgScore = totalAttempts > 0 ? Math.round((totalScore / totalAttempts) * 100) : 0;
-
-  // Activité récente (7 derniers jours)
-  const recentDays = [];
-  for (let d = 6; d >= 0; d--) {
-    const date = new Date();
-    date.setDate(date.getDate() - d);
-    const key = date.toISOString().split('T')[0];
-    recentDays.push({ date: key, count: activity[key] || 0 });
-  }
-
-  const container = document.getElementById('pasteur-content');
-  container.innerHTML = `
-    <div class="stats-grid">
-      <div class="stat-card">
-        <h3>Versets lus</h3>
-        <div class="stat-number">${totalVerses}</div>
-        <div class="stat-label">depuis le début</div>
-      </div>
-      <div class="stat-card">
-        <h3>Chapitres</h3>
-        <div class="stat-number">${totalChapters}</div>
-        <div class="stat-label">travaillés</div>
-      </div>
-      <div class="stat-card">
-        <h3>Score moyen</h3>
-        <div class="stat-number">${avgScore}%</div>
-        <div class="stat-label">aux quiz</div>
-      </div>
-      <div class="stat-card">
-        <h3>Jours actifs</h3>
-        <div class="stat-number">${daysActive}</div>
-        <div class="stat-label">de pratique</div>
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <h3>📅 Activité cette semaine</h3>
-      <div style="display:flex;gap:6px;margin-top:12px;align-items:flex-end;height:60px;">
-        ${recentDays.map(d => {
-          const max = Math.max(...recentDays.map(r => r.count), 1);
-          const h = Math.round((d.count / max) * 48) + 4;
-          const dayName = new Date(d.date).toLocaleDateString('fr-FR', { weekday: 'short' });
-          return `
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-              <div style="width:100%;height:${h}px;background:${d.count>0?'var(--violet)':'var(--violet-pale)'};border-radius:4px 4px 2px 2px;"></div>
-              <span style="font-size:10px;color:var(--gris-text)">${dayName}</span>
-            </div>
-          `;
-        }).join('')}
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <h3>📖 Chapitres récents</h3>
-      <ul class="user-list">
-        ${Object.entries(prog).slice(-8).reverse().map(([key, data]) => {
-          const [bNum, cNum] = key.split('_').map(Number);
-          const book = BOOKS[bNum - 1];
-          const vCount = Object.keys(data.verses || {}).length;
-          return `
-            <li class="user-item">
-              <div>
-                <div class="user-name">${book ? book.name : '?'} ch. ${cNum}</div>
-                <div class="user-stats">${vCount} verset${vCount > 1 ? 's' : ''} travaillé${vCount > 1 ? 's' : ''}</div>
-              </div>
-              <span class="user-badge">${data.completed ? '✓ Fini' : `v.${vCount}`}</span>
-            </li>
-          `;
-        }).join('') || '<li style="padding:16px;text-align:center;color:var(--gris-text);">Aucune progression enregistrée</li>'}
-      </ul>
-    </div>
-
-    <button class="btn-export" onclick="exportData()">
-      <span style="font-size:20px;">📤</span>
-      Exporter le rapport
-    </button>
-
-    <button style="width:100%;background:var(--rouge);color:white;border:none;border-radius:var(--radius-btn);padding:14px;font-family:'Lora',serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:-4px;" onclick="resetData()">
-      🗑️ Réinitialiser les données
-    </button>
-  `;
 }
 
-function exportData() {
-  const prog = JSON.parse(localStorage.getItem('progress') || '{}');
-  const activity = JSON.parse(localStorage.getItem('activity') || '{}');
-  let txt = '=== LA PAROLE APPRIVOISÉE — RAPPORT DE PROGRESSION ===\n';
-  txt += `Date : ${new Date().toLocaleDateString('fr-FR')}\n\n`;
-  txt += '— CHAPITRES TRAVAILLÉS —\n';
-  Object.entries(prog).forEach(([key, data]) => {
-    const [bNum, cNum] = key.split('_').map(Number);
-    const book = BOOKS[bNum - 1];
-    txt += `${book?.name || '?'} ch.${cNum} : ${Object.keys(data.verses).length} versets${data.completed ? ' (terminé)' : ''}\n`;
-  });
-  txt += '\n— ACTIVITÉ PAR JOUR —\n';
-  Object.entries(activity).sort().forEach(([d, c]) => {
-    txt += `${d} : ${c} activité${c > 1 ? 's' : ''}\n`;
-  });
-
-  const blob = new Blob([txt], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `parole-apprivoisee-${new Date().toISOString().split('T')[0]}.txt`;
-  a.click();
-  speak('Rapport exporté avec succès.');
+// ─── LECTURE ─────────────────────────────────────────────
+function nettoyerTexte(txt) {
+  return (txt || '').replace(/¶/g, '').replace(/\s+/g, ' ').trim();
 }
 
-function resetData() {
-  if (confirm('Effacer toute la progression ? Cette action est irréversible.')) {
-    localStorage.removeItem('progress');
-    localStorage.removeItem('activity');
-    renderPasteurDashboard();
-    speak('Données effacées.');
-  }
+// versetsData = { "1": "texte...", "2": "texte...", ... }
+function chargerChapitre(livre, numChapitre, versetsData) {
+  etat.livreActuel = livre;
+  etat.chapitreActuel = numChapitre;
+  etat.versets = Object.entries(versetsData)
+    .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+    .map(([num, txt]) => ({ num: parseInt(num), texte: nettoyerTexte(String(txt)) }));
+
+  etat.versetIndex = 0;
+  etat.motsRates = [];
+  afficherEcran('lecture');
+  document.getElementById('header-lecture').textContent = `📖 ${livre.nom} ${numChapitre}`;
+  document.getElementById('controles-ecoute').style.display = 'flex';
+  document.getElementById('controles-etapes').style.display = 'none';
+  document.getElementById('quiz-syllabe-zone').style.display = 'none';
+  document.getElementById('quiz-reco-zone').style.display = 'none';
+  document.getElementById('recompense-zone').style.display = 'none';
+  afficherVerset();
+  setTimeout(() => {
+    dire(`Chapitre ${numChapitre} du livre de ${livre.nom}. Écoute le verset.`);
+  }, 600);
 }
 
-/* ═══════════════════════════════════════
-   17. CONFETTIS CSS
-═══════════════════════════════════════ */
-function launchConfetti(score) {
-  if (score < 50) return;
-  const container = document.getElementById('confetti-container');
-  const colors = ['#534AB7','#F5C518','#1D9E75','#E8851A','#E24B4A','#7B74D4'];
+function afficherVerset() {
+  if (!etat.versets.length) return;
+  const v = etat.versets[etat.versetIndex];
+  if (!v) return;
+
+  const ref = `${etat.livreActuel.nom} ${etat.chapitreActuel}:${v.num}`;
+  document.getElementById('verset-ref').textContent = ref;
+  document.getElementById('verset-progres').textContent =
+    `Verset ${etat.versetIndex + 1} / ${etat.versets.length}`;
+
+  // Construire les mots cliquables
+  const mots = tokeniserMots(v.texte);
+  const container = document.getElementById('verset-texte');
   container.innerHTML = '';
-  const count = score >= 80 ? 60 : 30;
-  for (let i = 0; i < count; i++) {
-    const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    piece.style.cssText = `
-      left: ${Math.random() * 100}%;
-      background: ${colors[Math.floor(Math.random() * colors.length)]};
-      animation-duration: ${1.5 + Math.random() * 2}s;
-      animation-delay: ${Math.random() * 1}s;
-      width: ${6 + Math.random() * 8}px;
-      height: ${6 + Math.random() * 8}px;
-      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
-    `;
-    container.appendChild(piece);
-  }
-  setTimeout(() => { container.innerHTML = ''; }, 4000);
+
+  mots.forEach((mot, i) => {
+    if (!mot.trim()) return;
+    const span = document.createElement('span');
+    span.className = 'verse-word';
+    span.dataset.index = i;
+    span.dataset.mot = mot;
+    span.textContent = mot + ' ';
+    span.onclick = () => motClique(mot, span);
+    container.appendChild(span);
+  });
+
+  // Réinitialiser étape
+  etat.etape = 1;
+  afficherEtape(1);
+  lireVersetComplet();
 }
 
-/* ═══════════════════════════════════════
-   18. UTILITAIRES
-═══════════════════════════════════════ */
-function shuffle(arr) {
+function tokeniserMots(texte) {
+  return texte.split(/\s+/).filter(m => m.length > 0);
+}
+
+function motClique(mot, span) {
+  const motPur = mot.replace(/[,;:.!?'"«»]/g, '').toLowerCase();
+  const def = DEFINITIONS[motPur];
+  if (def) {
+    document.getElementById('defTitre').textContent = mot.replace(/[,;:.!?]/g, '');
+    document.getElementById('defTexte').textContent = def;
+    document.getElementById('defPopup').classList.add('visible');
+    document.getElementById('defOverlay').classList.add('visible');
+    dire(`${mot.replace(/[,;:.!?]/g, '')} — ${def}`, 0.8);
+  } else {
+    dire(mot.replace(/[,;:.!?'"«»]/g, ''), 0.8);
+  }
+}
+
+function fermerDef() {
+  document.getElementById('defPopup').classList.remove('visible');
+  document.getElementById('defOverlay').classList.remove('visible');
+}
+
+// ─── ÉTAPES PÉDAGOGIQUES ──────────────────────────────────
+const ETAPES_CONFIG = [
+  { n:1, label:"Étape 1 — Écoute", instructions:"Écoute le verset lu à voix haute. Tu peux l'écouter plusieurs fois." },
+  { n:2, label:"Étape 2 — Mot par mot", instructions:"Chaque mot sera lu séparément. Suis avec ton doigt !" },
+  { n:3, label:"Étape 3 — Syllabes", instructions:"Touche la bonne syllabe du mot que tu entends." },
+  { n:4, label:"Étape 4 — Reconnaissance", instructions:"Touche le mot que tu as entendu parmi les choix." },
+  { n:5, label:"🎉 Terminé !", instructions:"Bravo ! Tu as terminé ce verset." }
+];
+
+function afficherEtape(n) {
+  const cfg = ETAPES_CONFIG.find(e => e.n === n) || ETAPES_CONFIG[0];
+  document.getElementById('etape-badge').textContent = cfg.label;
+  document.getElementById('etape-instructions').textContent = cfg.instructions;
+
+  // Afficher/masquer zones
+  document.getElementById('controles-ecoute').style.display = n <= 2 ? 'flex' : 'none';
+  document.getElementById('controles-etapes').style.display = n >= 2 && n <= 4 ? 'block' : 'none';
+  document.getElementById('quiz-syllabe-zone').style.display = n === 3 ? 'block' : 'none';
+  document.getElementById('quiz-reco-zone').style.display = n === 4 ? 'block' : 'none';
+  document.getElementById('recompense-zone').style.display = n === 5 ? 'block' : 'none';
+}
+
+function etapeSuivante() {
+  clearTimeout(etat.timerRepetition);
+  etat.etape++;
+  if (etat.etape > 5) etat.etape = 5;
+  afficherEtape(etat.etape);
+
+  if (etat.etape === 2) {
+    lireMotAMot();
+  } else if (etat.etape === 3) {
+    preparerQuizSyllabe();
+  } else if (etat.etape === 4) {
+    preparerQuizReco();
+  } else if (etat.etape === 5) {
+    afficherRecompense();
+  }
+}
+
+// ─── LECTURE AUDIO ────────────────────────────────────────
+function lireVersetComplet() {
+  if (!etat.versets.length) return;
+  const v = etat.versets[etat.versetIndex];
+  if (!v) return;
+
+  // Effacer surlignage
+  document.querySelectorAll('.verse-word').forEach(w => w.classList.remove('lecture-active'));
+
+  const msg = etat.etape === 1
+    ? v.texte
+    : `Je relis : ${v.texte}`;
+  direLent(msg, () => {
+    if (etat.etape === 1) {
+      document.getElementById('controles-etapes').style.display = 'block';
+      const btn = document.getElementById('controles-etapes').querySelector('.btn');
+      if (btn) btn.textContent = '▶ Continuer vers étape 2';
+      programmerRepetition(v.texte);
+    }
+  });
+}
+
+async function lireMotAMot() {
+  if (!etat.versets.length) return;
+  const v = etat.versets[etat.versetIndex];
+  const mots = tokeniserMots(v.texte);
+  const spans = document.querySelectorAll('#verset-texte .verse-word');
+
+  dire("Je vais lire chaque mot. Suis avec ton doigt.", null, () => {
+    lireMotSequence(mots, spans, 0);
+  });
+}
+
+function lireMotSequence(mots, spans, i) {
+  if (i >= mots.length) {
+    // Fin lecture mot à mot
+    document.querySelectorAll('.verse-word').forEach(w => w.classList.remove('lecture-active'));
+    dire("Bien ! Tu peux continuer.", null, () => {
+      document.getElementById('controles-etapes').style.display = 'block';
+    });
+    return;
+  }
+
+  // Surligner mot
+  document.querySelectorAll('.verse-word').forEach(w => w.classList.remove('lecture-active'));
+  if (spans[i]) {
+    spans[i].classList.add('lecture-active');
+    spans[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Afficher syllabes dans le span
+    const mot = mots[i].replace(/[,;:.!?'"«»]/g, '');
+    const syls = syllabifier(mot);
+    afficherSyllabesSpan(spans[i], syls);
+  }
+
+  const motPur = mots[i].replace(/[,;:.!?'"«»]/g, '');
+  const r = new SpeechSynthesisUtterance(motPur);
+  r.lang = 'fr-FR';
+  r.rate = etat.mode === 'enfant' ? 0.6 : 0.72;
+  if (synthVoice) r.voice = synthVoice;
+  r.onend = () => {
+    setTimeout(() => lireMotSequence(mots, spans, i + 1), 350);
+  };
+  window.speechSynthesis.speak(r);
+}
+
+function afficherSyllabesSpan(span, syllabes) {
+  if (!syllabes || syllabes.length <= 1) return;
+  span.innerHTML = '';
+  syllabes.forEach((syl, i) => {
+    const s = document.createElement('span');
+    s.className = 'syl-span';
+    s.dataset.sylIndex = i;
+    s.textContent = syl;
+    span.appendChild(s);
+  });
+  // Animation séquentielle
+  animerSyllabes(span, syllabes);
+}
+
+function animerSyllabes(span, syllabes) {
+  const sylSpans = span.querySelectorAll('.syl-span');
+  let i = 0;
+  const delai = etat.mode === 'enfant' ? 300 : 220;
+
+  function litSyl() {
+    sylSpans.forEach(s => s.classList.remove('syl-lit'));
+    if (i >= sylSpans.length) return;
+    sylSpans[i].classList.add('syl-lit');
+    i++;
+    setTimeout(litSyl, delai);
+  }
+  setTimeout(litSyl, 50);
+}
+
+// ─── SYLLABIFICATION ─────────────────────────────────────
+function syllabifier(mot) {
+  if (!mot || mot.length <= 2) return [mot];
+  const m = mot.toLowerCase();
+  const voyelles = 'aeiouyàâéèêëîïôùûüœæ';
+  const estVoyelle = c => voyelles.includes(c);
+
+  // Digraphes consonne à traiter comme une seule
+  const DIGRAPHES_CONSONNE = ['ch','ph','th','gn','br','cr','dr','fr','gr','pr','tr','vr','bl','cl','fl','gl','pl','sl'];
+
+  const result = [];
+  let syllabe = '';
+
+  for (let i = 0; i < m.length; i++) {
+    syllabe += m[i];
+
+    if (estVoyelle(m[i])) {
+      // Regarder ce qui suit
+      const suite = m.slice(i + 1);
+      if (!suite) { result.push(syllabe); syllabe = ''; continue; }
+
+      const c1 = suite[0], c2 = suite[1] || '', c3 = suite[2] || '';
+      const estVoy1 = c1 && estVoyelle(c1);
+      const estVoy2 = c2 && estVoyelle(c2);
+      const digraphe = DIGRAPHES_CONSONNE.find(d => suite.startsWith(d));
+
+      if (!c1) {
+        result.push(syllabe); syllabe = '';
+      } else if (estVoy1) {
+        // Deux voyelles : couper avant la 2ème
+        result.push(syllabe); syllabe = '';
+      } else if (digraphe) {
+        // Digraphe consonne : si suivi d'une voyelle, il va avec la prochaine syllabe
+        if (estVoyelle(suite[digraphe.length] || '')) {
+          result.push(syllabe); syllabe = '';
+        } else {
+          // Digraphe dans la coda
+          syllabe += digraphe;
+          i += digraphe.length;
+          result.push(syllabe); syllabe = '';
+        }
+      } else if (!estVoy2) {
+        // Consonne + consonne : couper entre les deux (règle VC-CV)
+        if (c2 && !estVoyelle(c3)) {
+          // 3 consonnes : garder les 2 premières avec la voyelle
+          // non, règle simple : première consonne reste
+          result.push(syllabe + c1); syllabe = ''; i++;
+        } else {
+          result.push(syllabe); syllabe = '';
+        }
+      } else {
+        // Une seule consonne suivie d'une voyelle : consonne va avec la voyelle suivante
+        result.push(syllabe); syllabe = '';
+      }
+    }
+  }
+
+  if (syllabe) result.push(syllabe);
+  return result.length ? result : [mot];
+}
+
+// ─── QUIZ SYLLABES ───────────────────────────────────────
+function preparerQuizSyllabe() {
+  const v = etat.versets[etat.versetIndex];
+  const mots = tokeniserMots(v.texte)
+    .map(m => m.replace(/[,;:.!?'"«»]/g, ''))
+    .filter(m => m.length >= 4);
+
+  if (!mots.length) { etapeSuivante(); return; }
+
+  etat.motQuizIndex = 0;
+  etat.mots_pour_quiz = mots.slice(0, Math.min(3, mots.length));
+  lancerQuizSyllabeItem(0);
+}
+
+function lancerQuizSyllabeItem(idx) {
+  if (idx >= etat.mots_pour_quiz.length) {
+    dire("Excellent ! Tu as terminé les syllabes.", null, () => {
+      afficherEtape(4);
+      preparerQuizReco();
+    });
+    return;
+  }
+
+  const mot = etat.mots_pour_quiz[idx];
+  const syllabes = syllabifier(mot);
+
+  if (syllabes.length <= 1) {
+    lancerQuizSyllabeItem(idx + 1);
+    return;
+  }
+
+  etat.motQuizIndex = idx;
+  const bonneReponse = syllabes[0]; // première syllabe
+
+  // Distracteurs : autres syllabes + génération
+  const distracteurs = new Set();
+  syllabes.slice(1).forEach(s => distracteurs.add(s));
+
+  // Si pas assez de distracteurs, ajouter depuis d'autres mots
+  const autresMots = tokeniserMots(etat.versets[etat.versetIndex].texte)
+    .map(m => m.replace(/[,;:.!?'"«»]/g, ''))
+    .filter(m => m !== mot && m.length >= 3);
+
+  for (const am of autresMots) {
+    if (distracteurs.size >= 2) break;
+    const ss = syllabifier(am);
+    ss.forEach(s => { if (s !== bonneReponse && s.length >= 2) distracteurs.add(s); });
+  }
+
+  // Compléter si nécessaire
+  const faux = ['bon', 'dieu', 'fai', 'moi', 'sei', 'grâ', 'ver'];
+  let fi = 0;
+  while (distracteurs.size < 2 && fi < faux.length) {
+    if (!distracteurs.has(faux[fi]) && faux[fi] !== bonneReponse) distracteurs.add(faux[fi]);
+    fi++;
+  }
+
+  const options = shuffleArray([bonneReponse, ...Array.from(distracteurs).slice(0, 2)]);
+
+  document.getElementById('syllabe-mot-cible').textContent = mot;
+  etat.syllabeQuizMot = mot;
+  etat.syllabeQuizBonne = bonneReponse;
+
+  const grid = document.getElementById('syllabe-options');
+  grid.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'syllabe-btn';
+    btn.textContent = opt;
+    btn.onclick = () => repondreQuizSyllabe(opt, btn, idx);
+    grid.appendChild(btn);
+  });
+
+  dire(`Touche la première syllabe du mot : ${mot}`, etat.mode === 'enfant' ? 0.65 : 0.75, () => {
+    programmerRepetition(`Quelle est la première syllabe de : ${mot} ?`);
+  });
+}
+
+function repondreQuizSyllabe(reponse, btn, idx) {
+  clearTimeout(etat.timerRepetition);
+  document.querySelectorAll('.syllabe-btn').forEach(b => b.classList.add('disabled'));
+  window.speechSynthesis.cancel();
+
+  if (reponse === etat.syllabeQuizBonne) {
+    btn.classList.add('correct');
+    dire("Bravo ! C'est la bonne syllabe !", null, () => {
+      setTimeout(() => lancerQuizSyllabeItem(idx + 1), 800);
+    });
+  } else {
+    btn.classList.add('incorrect');
+    // Montrer la bonne réponse
+    document.querySelectorAll('.syllabe-btn').forEach(b => {
+      if (b.textContent === etat.syllabeQuizBonne) b.classList.add('correct');
+    });
+    dire(`Essaie encore. La première syllabe est : ${etat.syllabeQuizBonne}`, null, () => {
+      setTimeout(() => lancerQuizSyllabeItem(idx), 1000);
+    });
+    if (!etat.motsRates.includes(etat.syllabeQuizMot))
+      etat.motsRates.push(etat.syllabeQuizMot);
+  }
+}
+
+function ecouter_mot_quiz() {
+  dire(etat.syllabeQuizMot, etat.mode === 'enfant' ? 0.6 : 0.72);
+}
+
+// ─── QUIZ RECONNAISSANCE ──────────────────────────────────
+function preparerQuizReco() {
+  const v = etat.versets[etat.versetIndex];
+  const mots = tokeniserMots(v.texte)
+    .map(m => m.replace(/[,;:.!?'"«»]/g, ''))
+    .filter(m => m.length >= 3);
+
+  if (!mots.length) { afficherRecompense(); return; }
+
+  const motCible = mots[Math.floor(Math.random() * mots.length)];
+  etat.recoQuizMot = motCible;
+
+  // 3 options : le bon + 2 distracteurs du verset
+  const distracteurs = mots
+    .filter(m => m !== motCible)
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 2);
+
+  while (distracteurs.length < 2) {
+    distracteurs.push(motCible.split('').reverse().join('').substring(0, 3));
+  }
+
+  const options = shuffleArray([motCible, ...distracteurs]);
+
+  const container = document.getElementById('reco-options');
+  container.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.innerHTML = `<span>🔤</span> ${opt}`;
+    btn.onclick = () => repondreQuizReco(opt, btn);
+    container.appendChild(btn);
+  });
+
+  dire(`Quel mot vas-tu entendre ? Écoute bien.`, null, () => {
+    setTimeout(() => {
+      dire(motCible, etat.mode === 'enfant' ? 0.6 : 0.72, () => {
+        programmerRepetition(motCible);
+      });
+    }, 600);
+  });
+}
+
+function rejouerQuizReco() {
+  clearTimeout(etat.timerRepetition);
+  dire(etat.recoQuizMot, etat.mode === 'enfant' ? 0.6 : 0.72, () => {
+    programmerRepetition(etat.recoQuizMot);
+  });
+}
+
+function repondreQuizReco(reponse, btn) {
+  clearTimeout(etat.timerRepetition);
+  document.querySelectorAll('.quiz-option').forEach(b => {
+    b.classList.add('disabled');
+    b.style.pointerEvents = 'none';
+  });
+  window.speechSynthesis.cancel();
+
+  if (reponse === etat.recoQuizMot) {
+    btn.classList.add('correct');
+    if (etat.mode === 'enfant') btn.classList.add('bounce');
+    dire("Excellent ! Tu as reconnu le mot !", null, () => {
+      setTimeout(afficherRecompense, 600);
+    });
+  } else {
+    btn.classList.add('incorrect');
+    document.querySelectorAll('.quiz-option').forEach(b => {
+      const txt = b.textContent.trim().replace('🔤 ', '');
+      if (txt === etat.recoQuizMot) b.classList.add('correct');
+    });
+    dire(`Presque ! Le mot était : ${etat.recoQuizMot}`, null, () => {
+      setTimeout(afficherRecompense, 1000);
+    });
+    if (!etat.motsRates.includes(etat.recoQuizMot))
+      etat.motsRates.push(etat.recoQuizMot);
+  }
+}
+
+// ─── RÉCOMPENSE ───────────────────────────────────────────
+function afficherRecompense() {
+  etat.etape = 5;
+  afficherEtape(5);
+
+  const etoilesBox = document.getElementById('etoiles-box');
+  etoilesBox.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const e = document.createElement('span');
+    e.className = 'etoile';
+    e.textContent = '⭐';
+    etoilesBox.appendChild(e);
+  }
+
+  const v = etat.versets[etat.versetIndex];
+  const ref = `${etat.livreActuel.nom} ${etat.chapitreActuel}:${v.num}`;
+  document.getElementById('recompense-msg').textContent =
+    `Tu as terminé le verset ${ref}`;
+
+  // Enregistrer progression
+  enregistrerProgression();
+
+  dire("Félicitations ! Tu as très bien travaillé. Continue comme ça !", null);
+}
+
+// ─── NAVIGATION VERSETS ──────────────────────────────────
+function versetSuivant() {
+  clearTimeout(etat.timerRepetition);
+  window.speechSynthesis.cancel();
+  if (etat.versetIndex < etat.versets.length - 1) {
+    etat.versetIndex++;
+    etat.etape = 1;
+    etat.motsRates = [];
+    afficherVerset();
+  } else {
+    // Fin du chapitre
+    dire("Bravo ! Tu as terminé tout le chapitre. C'est formidable !");
+    setTimeout(afficherChapitres, 2000);
+  }
+}
+
+function versetPrecedent() {
+  clearTimeout(etat.timerRepetition);
+  window.speechSynthesis.cancel();
+  if (etat.versetIndex > 0) {
+    etat.versetIndex--;
+    etat.etape = 1;
+    afficherVerset();
+  }
+}
+
+// ─── PROGRESSION ─────────────────────────────────────────
+function enregistrerProgression() {
+  const livreN = etat.livreActuel.n;
+  const chapN = etat.chapitreActuel;
+  const v = etat.versets[etat.versetIndex];
+
+  if (!etat.progression[livreN]) etat.progression[livreN] = {};
+  if (!etat.progression[livreN][chapN]) etat.progression[livreN][chapN] = { versets: 0, motsDiff: [] };
+
+  etat.progression[livreN][chapN].versets =
+    Math.max(etat.progression[livreN][chapN].versets, v.num);
+  etat.progression[livreN][chapN].motsDiff =
+    [...new Set([...etat.progression[livreN][chapN].motsDiff, ...etat.motsRates])];
+  etat.progression[livreN][chapN].fini =
+    etat.progression[livreN][chapN].versets >= etat.versets.length;
+
+  localStorage.setItem('lpa_progression', JSON.stringify(etat.progression));
+
+  // Mise à jour élève actif
+  if (etat.eleveActif !== null) {
+    const el = etat.eleves[etat.eleveActif];
+    if (el) {
+      if (!el.stats) el.stats = { versets: 0, motsDiff: [] };
+      el.stats.versets++;
+      el.stats.motsDiff = [...new Set([...el.stats.motsDiff, ...etat.motsRates])];
+      el.stats.dernierTravail = new Date().toLocaleDateString('fr-FR');
+      localStorage.setItem('lpa_eleves', JSON.stringify(etat.eleves));
+    }
+  }
+}
+
+// ─── VITESSE ─────────────────────────────────────────────
+function changerVitesse(val) {
+  etat.vitesse = parseFloat(val);
+  document.getElementById('vitesseVal').textContent = parseFloat(val).toFixed(2);
+}
+
+// ─── PASTEUR ─────────────────────────────────────────────
+function afficherPasteur() {
+  afficherEcran('pasteur');
+  rafraichirSuivi();
+  setTimeout(() => {
+    dire("Tableau de suivi des élèves. Touche un nom pour sélectionner.");
+  }, 400);
+}
+
+function rafraichirSuivi() {
+  const container = document.getElementById('suivi-eleves');
+  container.innerHTML = '';
+
+  if (!etat.eleves.length) {
+    container.innerHTML = '<div style="color:#999;text-align:center;padding:20px;">Aucun élève enregistré.</div>';
+    return;
+  }
+
+  etat.eleves.forEach((el, idx) => {
+    const s = el.stats || { versets: 0, motsDiff: [], dernierTravail: '—' };
+    const pct = Math.min(100, (s.versets / 1000) * 100);
+    const actif = etat.eleveActif === idx;
+
+    const card = document.createElement('div');
+    card.className = 'suivi-card';
+    card.style.borderLeft = actif ? '4px solid var(--violet)' : '4px solid transparent';
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="suivi-nom">${el.nom}</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" style="padding:8px 14px;margin:0;font-size:0.8rem;"
+            onclick="selectionnerEleve(${idx})">
+            ${actif ? '✓ Actif' : '▷ Activer'}
+          </button>
+          <button style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:#e74c3c;"
+            onclick="supprimerEleve(${idx})">🗑</button>
+        </div>
+      </div>
+      <div class="suivi-stats">
+        📖 ${s.versets} verset(s) • 🗓 Dernier : ${s.dernierTravail || '—'}
+      </div>
+      ${s.motsDiff.length ? `<div style="font-size:0.8rem;color:#e67e22;margin-top:4px;">⚠️ Mots difficiles : ${s.motsDiff.slice(0,5).join(', ')}</div>` : ''}
+      <div class="suivi-barre"><div class="suivi-barre-fill" style="width:${pct}%"></div></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function selectionnerEleve(idx) {
+  etat.eleveActif = idx;
+  rafraichirSuivi();
+  dire(`Élève actif : ${etat.eleves[idx].nom}`);
+}
+
+function supprimerEleve(idx) {
+  if (!confirm(`Supprimer l'élève ${etat.eleves[idx].nom} ?`)) return;
+  etat.eleves.splice(idx, 1);
+  if (etat.eleveActif === idx) etat.eleveActif = null;
+  localStorage.setItem('lpa_eleves', JSON.stringify(etat.eleves));
+  rafraichirSuivi();
+}
+
+function ajouterEleve() {
+  const input = document.getElementById('nouvelEleve');
+  const nom = input.value.trim();
+  if (!nom) { dire("Écris d'abord le prénom de l'élève."); return; }
+  etat.eleves.push({ nom, stats: { versets: 0, motsDiff: [], dernierTravail: null } });
+  localStorage.setItem('lpa_eleves', JSON.stringify(etat.eleves));
+  input.value = '';
+  rafraichirSuivi();
+  dire(`Élève ${nom} ajouté.`);
+}
+
+function exporterSuivi() {
+  let txt = `SUIVI — La Parole Apprivoisée\nDate : ${new Date().toLocaleDateString('fr-FR')}\n\n`;
+  etat.eleves.forEach(el => {
+    const s = el.stats || {};
+    txt += `${el.nom}\n`;
+    txt += `  Versets travaillés : ${s.versets || 0}\n`;
+    txt += `  Dernier travail : ${s.dernierTravail || '—'}\n`;
+    txt += `  Mots difficiles : ${(s.motsDiff || []).join(', ') || 'aucun'}\n\n`;
+  });
+
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'suivi-parole-apprivoisee.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  dire("Le fichier de suivi a été exporté.");
+}
+
+function retourLecture() {
+  if (etat.versets.length) afficherEcran('lecture');
+  else afficherLivres();
+}
+
+// ─── UTILITAIRES ─────────────────────────────────────────
+function shuffleArray(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -1997,53 +1896,77 @@ function shuffle(arr) {
   return a;
 }
 
-function randomSyllable() {
-  const syllables = ['com','ment','bien','tout','Dieu','mais','dans','par','sur','les','des','que','une'];
-  return syllables[Math.floor(Math.random() * syllables.length)];
+// ─── MANIFEST PWA INLINE ──────────────────────────────────
+function injecterManifest() {
+  const manifest = {
+    name: "La Parole Apprivoisée",
+    short_name: "Parole",
+    description: "Apprends à lire avec la Bible Louis Segond 1910",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#534AB7",
+    theme_color: "#534AB7",
+    orientation: "portrait",
+    icons: [
+      { src: svgToDataUrl(128), sizes: "128x128", type: "image/svg+xml" },
+      { src: svgToDataUrl(192), sizes: "192x192", type: "image/svg+xml" },
+      { src: svgToDataUrl(512), sizes: "512x512", type: "image/svg+xml" }
+    ]
+  };
+
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  document.getElementById('manifestLink').href = url;
 }
 
-function listenQuizWord() {
-  const word = APP.quizWords[APP.quizIdx];
-  if (word) speak(word);
+function svgToDataUrl(size) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <rect width="${size}" height="${size}" rx="${size*0.2}" fill="#534AB7"/>
+    <line x1="${size*0.5}" y1="${size*0.15}" x2="${size*0.5}" y2="${size*0.85}" stroke="white" stroke-width="${size*0.1}" stroke-linecap="round"/>
+    <line x1="${size*0.25}" y1="${size*0.4}" x2="${size*0.75}" y2="${size*0.4}" stroke="white" stroke-width="${size*0.1}" stroke-linecap="round"/>
+  </svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(svg);
 }
 
-/* ═══════════════════════════════════════
-   19. SERVICE WORKER
-═══════════════════════════════════════ */
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').then(reg => {
-      console.log('SW enregistré:', reg.scope);
-    }).catch(err => {
-      console.warn('SW non disponible:', err);
-    });
-  });
-}
+// ─── INIT ────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  injecterManifest();
 
-/* ═══════════════════════════════════════
-   20. INITIALISATION
-═══════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
-  // Accueil vocal
+  // 1. Afficher l'écran d'accueil IMMÉDIATEMENT — aucun blocage
+  afficherEcran('accueil');
+
+  // 2. Voix de bienvenue
   setTimeout(() => {
-    speak('Bienvenue dans La Parole Apprivoisée. Choisissez le mode Enfant pour les petits, ou le mode Adulte pour les grands.');
-  }, 800);
+    dire("Bienvenue dans La Parole Apprivoisée. Touche Enfant ou Adulte pour commencer.", 0.85);
+  }, 600);
 
-  // Pré-chargement hors-ligne en arrière-plan (silencieux)
-  setTimeout(() => preloadAllBooks(), 3000);
+  // 3. Charger segond_1910.json en arrière-plan sans bloquer l'UI
+  chargerBibleComplete().then(ok => {
+    if (ok) {
+      console.log('[App] Bible complète prête — mode hors ligne disponible');
+      majStatut('✓', '✓ Bible prête — fonctionne hors ligne', '#2ecc71');
+      // Masquer le badge après 3s si tout va bien
+      setTimeout(() => {
+        const s = document.getElementById('bible-status');
+        if (s) { s.style.opacity = '0'; setTimeout(() => s.remove(), 400); }
+      }, 3000);
+    } else {
+      console.log('[App] Mode API — internet requis pour chaque chapitre');
+      majStatut('⚠', '⚠ Bible locale absente — internet requis', '#f39c12');
+    }
+  });
 
-  // Mode par défaut selon préférence stockée
-  const savedMode = localStorage.getItem('app_mode');
-  if (savedMode) APP.mode = savedMode;
+  // 4. Annuler timer répétition si on touche l'écran
+  document.addEventListener('click', () => {
+    clearTimeout(etat.timerRepetition);
+  }, { capture: true, passive: true });
 });
 
-// Observer changement d'écran pasteur
-const observer = new MutationObserver(() => {
-  if (document.getElementById('screen-pasteur').classList.contains('active')) {
-    renderPasteurDashboard();
-  }
+// Prévenir le retour arrière par swipe (mode PWA)
+window.addEventListener('popstate', e => {
+  e.preventDefault();
 });
-observer.observe(document.getElementById('screen-pasteur'), { attributes: true, attributeFilter: ['class'] });
+
 </script>
 
 </body>
