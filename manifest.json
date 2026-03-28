@@ -1,14 +1,14 @@
 {
   "name": "La Parole Apprivoisée",
   "short_name": "La Parole",
-  "description": "Apprendre à lire avec la Bible Louis Segond 1910",
-  "lang": "fr",
-  "start_url": "./",
+  "description": "Apprends à lire avec la Bible Louis Segond 1910",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0F0C2E",
+  "background_color": "#534AB7",
   "theme_color": "#534AB7",
-  "orientation": "portrait-primary",
-  "categories": ["education", "books"],
+  "orientation": "portrait",
+  "lang": "fr",
+  "categories": ["education", "lifestyle"],
   "icons": [
     {
       "src": "icon-192.svg",
@@ -24,5 +24,13 @@
     }
   ],
   "screenshots": [],
-  "prefer_related_applications": false
+  "shortcuts": [
+    {
+      "name": "Continuer la lecture",
+      "short_name": "Lire",
+      "description": "Reprendre là où tu t'es arrêté",
+      "url": "./index.html",
+      "icons": [{"src": "icon-192.svg", "sizes": "192x192"}]
+    }
+  ]
 }

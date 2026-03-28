@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
-  <rect width="192" height="192" rx="40" fill="#534AB7"/>
-  <rect x="86" y="28" width="20" height="100" rx="8" fill="#E8C96B"/>
-  <rect x="44" y="58" width="104" height="20" rx="8" fill="#E8C96B"/>
-  <text x="96" y="158" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#EDE9FF" text-anchor="middle">La Parole</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="32" fill="#534AB7"/>
+  <rect x="86" y="28" width="20" height="136" rx="10" fill="white"/>
+  <rect x="28" y="86" width="136" height="20" rx="10" fill="white"/>
 </svg>
