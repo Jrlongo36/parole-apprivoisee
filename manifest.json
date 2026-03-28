@@ -1,42 +1,28 @@
 {
-  "short_name": "La Parole",
   "name": "La Parole Apprivoisée",
-  "description": "Apprends à lire avec la Bible Louis Segond 1910",
+  "short_name": "La Parole",
+  "description": "Apprendre à lire avec la Bible Louis Segond 1910",
   "lang": "fr",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#0F0C2E",
   "theme_color": "#534AB7",
-  "categories": ["education", "lifestyle"],
+  "orientation": "portrait-primary",
+  "categories": ["education", "books"],
   "icons": [
     {
-      "src": "/icons/icon.svg",
-      "sizes": "any",
+      "src": "icon-192.svg",
+      "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/icons/icon-512.png",
+      "src": "icon-512.svg",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [],
-  "shortcuts": [
-    {
-      "name": "Commencer à lire",
-      "short_name": "Lire",
-      "url": "/?action=read",
-      "icons": [{ "src": "/icons/icon.svg", "sizes": "any" }]
-    }
-  ]
+  "prefer_related_applications": false
 }
