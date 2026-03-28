@@ -1,148 +1,112 @@
-// La Parole Apprivoisée — Service Worker v2.0
-// Optimisé pour Vercel : cache statique + API getbible.net
+/* ═══════════════════════════════════════════════════
+   LA PAROLE APPRIVOISÉE — SERVICE WORKER v2.0
+   Cache offline complet : HTML, assets, Bible API
+═══════════════════════════════════════════════════ */
 
 const CACHE_NAME = 'lpa-v2';
-const API_CACHE = 'lpa-bible-v2';
+const BIBLE_CACHE = 'lpa-bible-v2';
 
-// Ressources statiques à précacher immédiatement
+// Fichiers à mettre en cache immédiatement à l'installation
 const STATIC_ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  // Le JSON Bible sera mis en cache dynamiquement s'il existe
+  '/',
+  '/index.html',
+  '/manifest.json',
+  'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap',
+  'https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js',
 ];
 
-// ─── INSTALL ──────────────────────────────────────
+// ─── INSTALLATION ──────────────────────────────────
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      // Précache les assets statiques (best-effort)
-      return Promise.allSettled(
-        STATIC_ASSETS.map(url =>
-          cache.add(url).catch(() => {/* ignore si manquant */})
-        )
-      );
-    }).then(() => {
-      // Essaie de précacher le JSON Bible si présent sur Vercel
-      return caches.open(API_CACHE).then(cache =>
-        cache.add('./segond_1910.json').catch(() => {
-          // Normal si le fichier n'est pas déployé
-          console.log('[SW] segond_1910.json absent du déploiement — API fallback actif');
-        })
-      );
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        // On cache les assets statiques, on ignore les erreurs individuelles
+        return Promise.allSettled(
+          STATIC_ASSETS.map(url => cache.add(url).catch(e => console.warn('SW: cache miss for', url, e)))
+        );
+      })
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-// ─── ACTIVATE ─────────────────────────────────────
+// ─── ACTIVATION ────────────────────────────────────
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
         keys
-          .filter(k => k !== CACHE_NAME && k !== API_CACHE)
-          .map(k => caches.delete(k))
+          .filter(key => key !== CACHE_NAME && key !== BIBLE_CACHE)
+          .map(key => caches.delete(key))
       )
     ).then(() => self.clients.claim())
   );
 });
 
-// ─── FETCH STRATEGY ───────────────────────────────
+// ─── FETCH STRATEGY ────────────────────────────────
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // 1. Fichier JSON Bible (gros fichier) → Cache First
-  if(url.pathname.includes('segond_1910.json')){
+  // Bible API → Cache First, puis réseau, puis erreur offline
+  if (url.hostname === 'api.getbible.net') {
     event.respondWith(
-      caches.open(API_CACHE).then(cache =>
+      caches.open(BIBLE_CACHE).then(cache =>
         cache.match(event.request).then(cached => {
-          if(cached) return cached;
-          return fetch(event.request).then(response => {
-            if(response.ok){
-              cache.put(event.request, response.clone());
-            }
-            return response;
-          });
+          if (cached) return cached;
+          return fetch(event.request)
+            .then(response => {
+              if (response.ok) cache.put(event.request, response.clone());
+              return response;
+            })
+            .catch(() => new Response(
+              JSON.stringify({ error: 'offline', chapters: {} }),
+              { headers: { 'Content-Type': 'application/json' } }
+            ));
         })
       )
     );
     return;
   }
 
-  // 2. API getbible.net → Network First + Cache Fallback
-  if(url.hostname === 'api.getbible.net'){
+  // Google Fonts → Network First avec fallback cache
+  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
-      caches.open(API_CACHE).then(cache =>
-        fetch(event.request)
-          .then(response => {
-            if(response.ok){
-              cache.put(event.request, response.clone());
-            }
-            return response;
-          })
-          .catch(() => cache.match(event.request))
-      )
-    );
-    return;
-  }
-
-  // 3. Google Fonts → Stale While Revalidate
-  if(url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')){
-    event.respondWith(
-      caches.open(CACHE_NAME).then(cache =>
-        cache.match(event.request).then(cached => {
-          const fetchPromise = fetch(event.request).then(response => {
-            cache.put(event.request, response.clone());
-            return response;
-          }).catch(() => null);
-          return cached || fetchPromise;
+      fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
         })
-      )
+        .catch(() => caches.match(event.request))
     );
     return;
   }
 
-  // 4. Assets statiques → Cache First
-  if(
-    url.pathname === '/' ||
-    url.pathname.endsWith('.html') ||
-    url.pathname.endsWith('.json') ||
-    url.pathname.endsWith('.js') ||
-    url.pathname.endsWith('.css') ||
-    url.pathname.endsWith('.png') ||
-    url.pathname.endsWith('.svg')
-  ){
+  // CDN (confetti, etc.) → Cache First
+  if (url.hostname.includes('cdn.jsdelivr.net')) {
     event.respondWith(
-      caches.open(CACHE_NAME).then(cache =>
-        cache.match(event.request).then(cached => {
-          if(cached) return cached;
-          return fetch(event.request).then(response => {
-            if(response.ok) cache.put(event.request, response.clone());
-            return response;
-          });
-        })
-      )
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(response => {
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+          return response;
+        });
+      })
     );
     return;
   }
 
-  // 5. Tout le reste → Network avec fallback cache
+  // App shell → Cache First avec fallback réseau
   event.respondWith(
-    fetch(event.request).catch(() =>
-      caches.match(event.request)
-    )
+    caches.match(event.request).then(cached => {
+      if (cached) return cached;
+      return fetch(event.request)
+        .then(response => {
+          if (response.ok && event.request.method === 'GET') {
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+          }
+          return response;
+        })
+        .catch(() => caches.match('/index.html'));
+    })
   );
-});
-
-// ─── MESSAGE HANDLER ──────────────────────────────
-// Permet à l'app de demander le précachage d'un livre
-self.addEventListener('message', event => {
-  if(event.data && event.data.type === 'CACHE_BOOK'){
-    const bookUrl = `https://api.getbible.net/v2/lsg/${event.data.bookNum}.json`;
-    caches.open(API_CACHE).then(cache => cache.add(bookUrl).catch(()=>{}));
-  }
-  if(event.data && event.data.type === 'SKIP_WAITING'){
-    self.skipWaiting();
-  }
 });
