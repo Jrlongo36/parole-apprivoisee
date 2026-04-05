@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
     <title>La Parole Apprivoisée</title>
     <link rel="manifest" href="./manifest.json" />
-    <meta name="theme-color" content="#1a237e"/>
+    <meta name="theme-color" content="#534AB7"/>
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <link href="style.css" rel="stylesheet" />
@@ -20,31 +20,34 @@
         <span id="star-count">⭐ 0</span>
     </div>
 
-    <section id="screen-home" class="card" style="margin-top: 50px;">
+    <section id="scr-accueil" class="card" style="margin-top: 50px;">
         <h1 style="color: var(--primary);">La Parole Apprivoisée</h1>
-        <p>Apprends à lire avec la Bible !</p>
+        <p style="margin-bottom: 20px;">Apprends à lire avec la Bible !</p>
         <button class="btn-add" onclick="creerEleve()">+ Ajouter un élève</button>
         <div id="liste-eleves" class="grid-menu"></div>
     </section>
 
-    <section id="screen-lecture" class="card hidden" style="margin-top: 50px;">
-        <h2 id="ref-verset" style="color: var(--primary); margin-bottom: 15px;">Livre Chapitre:Verset</h2>
-        
-        <div id="texte-verset-karaoke" class="karaoke-container"></div>
-
-        <div style="display: flex; gap: 10px; margin-top: 25px;">
-            <button class="btn-main" id="btn-lire-verset" onclick="lireVersetKaraoke()" style="background-color: var(--or); color: black; flex: 1;">
-                ▶️ Écouter
-            </button>
-            <button class="btn-main hidden" id="btn-aller-quiz" onclick="passerAuQuizFinal()" style="background-color: var(--vert); flex: 1;">
-                Jouer 🎯
-            </button>
-        </div>
+    <section id="scr-livres" class="card hidden" style="margin-top: 50px;">
+        <h2 style="color: var(--primary); margin-bottom: 20px;">Choisis un livre</h2>
+        <div id="list-livres" class="grid-menu"></div>
     </section>
 
-    <section id="screen-quiz" class="card hidden" style="margin-top: 50px;">
+    <section id="scr-chapitres" class="card hidden" style="margin-top: 50px;">
+        <h2 id="titre-livre" style="color: var(--primary); margin-bottom: 20px;">Livre</h2>
+        <div id="list-chapitres" class="grid-menu" style="grid-template-columns: repeat(4, 1fr);"></div>
+    </section>
+
+    <section id="scr-lecture" class="card hidden" style="margin-top: 50px;">
+        <h2 id="ref-label" style="color: var(--primary); margin-bottom: 15px;">Livre Chapitre:Verset</h2>
+        <p id="text-display" style="font-size: 1.5rem; line-height: 2; text-align: left; min-height: 150px;"></p>
+        <button id="btn-lire" class="btn-main" onclick="lireVersetEtSyllabes()" style="margin-top: 20px; background-color: var(--or, #FFD700); color: black;">
+            ▶️ Écouter et Apprendre
+        </button>
+    </section>
+
+    <section id="scr-quiz" class="card hidden" style="margin-top: 50px;">
         <h2>Trouve la première syllabe :</h2>
-        <h1 id="mot-target" style="font-size: 3rem; margin: 20px 0;">...</h1>
+        <h1 id="word-hint" style="font-size: 3rem; margin: 20px 0;">...</h1>
         <div id="syllabes-choices" class="grid-menu" style="margin-top: 30px;"></div>
     </section>
 
@@ -53,9 +56,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then(() => console.log('Service Worker enregistré.'))
-            .catch(err => console.error('Erreur SW:', err));
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
         });
       }
     </script>
