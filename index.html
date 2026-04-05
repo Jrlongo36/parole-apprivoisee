@@ -28,13 +28,22 @@
     </section>
 
     <section id="screen-lecture" class="card hidden" style="margin-top: 50px;">
-        <h2 id="ref-verset" style="color: var(--primary);">Livre Chapitre:Verset</h2>
-        <p id="texte-verset" style="font-size: 1.5rem; line-height: 2; text-align: left;"></p>
-        <button class="btn-main" onclick="passerAuQuiz()" style="margin-top: 20px;">J'ai lu ! Jouons 🎯</button>
+        <h2 id="ref-verset" style="color: var(--primary); margin-bottom: 15px;">Livre Chapitre:Verset</h2>
+        
+        <div id="texte-verset-karaoke" class="karaoke-container"></div>
+
+        <div style="display: flex; gap: 10px; margin-top: 25px;">
+            <button class="btn-main" id="btn-lire-verset" onclick="lireVersetKaraoke()" style="background-color: var(--or); color: black; flex: 1;">
+                ▶️ Écouter
+            </button>
+            <button class="btn-main hidden" id="btn-aller-quiz" onclick="passerAuQuizFinal()" style="background-color: var(--vert); flex: 1;">
+                Jouer 🎯
+            </button>
+        </div>
     </section>
 
     <section id="screen-quiz" class="card hidden" style="margin-top: 50px;">
-        <h2>Trouve la bonne syllabe pour :</h2>
+        <h2>Trouve la première syllabe :</h2>
         <h1 id="mot-target" style="font-size: 3rem; margin: 20px 0;">...</h1>
         <div id="syllabes-choices" class="grid-menu" style="margin-top: 30px;"></div>
     </section>
@@ -45,8 +54,8 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js')
-            .then(() => console.log('Service Worker enregistré avec succès.'))
-            .catch(err => console.error('Erreur Service Worker:', err));
+            .then(() => console.log('Service Worker enregistré.'))
+            .catch(err => console.error('Erreur SW:', err));
         });
       }
     </script>
