@@ -4,61 +4,342 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
     <title>La Parole Apprivoisée</title>
-    <link rel="manifest" href="./manifest.json" />
-    <meta name="theme-color" content="#534AB7"/>
-    <meta name="mobile-web-app-capable" content="yes"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <link href="style.css" rel="stylesheet" />
+    <style>
+        /* CSS PREMIUM INTÉGRÉ */
+        :root { --violet: #534AB7; --vert: #2ecc71; --blanc: #ffffff; --gris: #f4f3ff; --texte: #1a1a2e; --or: #FFD700; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Lora', sans-serif; background: var(--gris); color: var(--texte); }
+        
+        #status-bar { background: var(--violet); color: white; padding: 15px; display: flex; justify-content: space-between; position: sticky; top: 0; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        section { padding: 20px; max-width: 500px; margin: auto; }
+        .hidden { display: none !important; }
+        
+        .card { background: white; border-radius: 24px; padding: 30px 25px; box-shadow: 0 10px 30px rgba(83, 74, 183, 0.08); text-align: center; }
+        .btn-main { background: var(--violet); color: white; border: none; padding: 15px; border-radius: 14px; width: 100%; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .btn-profil { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px 15px; border-radius: 20px; border: 2px solid transparent; cursor: pointer; background: var(--blanc); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .btn-profil.enfant { border-color: var(--vert); }
+        .btn-profil.adulte { border-color: var(--violet); }
+        .btn-profil .icon { font-size: 3.5rem; margin-bottom: 15px; }
+        .btn-profil .text { font-size: 1.2rem; font-weight: bold; }
+        
+        .btn-syl { background: white; border: 2px solid var(--violet); color: var(--violet); font-size: 1.2rem; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        .btn-syl.correct { background: var(--vert); border-color: var(--vert); color: white; transform: scale(1.05); }
+        
+        /* Classe pour le Karaoké */
+        .highlight-or { background-color: var(--or); color: black; border-radius: 4px; padding: 2px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    </style>
 </head>
 <body>
-
     <div id="status-bar">
         <span id="user-name">Invité</span>
-        <div class="progress-container">
-            <div id="progress-bar-inner"></div>
-        </div>
         <span id="star-count">⭐ 0</span>
     </div>
 
-    <section id="scr-accueil" class="card" style="margin-top: 50px;">
-        <h1 style="color: var(--primary);">La Parole Apprivoisée</h1>
-        <p style="margin-bottom: 20px;">Apprends à lire avec la Bible !</p>
-        <button class="btn-add" onclick="creerEleve()">+ Ajouter un élève</button>
-        <div id="liste-eleves" class="grid-menu"></div>
+    <div id="erreur-ecran" class="hidden" style="padding: 20px; color: red; text-align: center; margin-top: 50px;"></div>
+
+    <section id="accueil" class="card" style="margin-top: 40px;">
+        <h1 style="color: var(--violet); font-size: 2rem; margin-bottom: 5px;">La Parole</h1>
+        <p style="margin-bottom: 30px; color: #666;">La Bible pour tous les âges</p>
+        
+        <div class="grid-menu" style="margin-bottom: 30px;">
+            <button class="btn-profil enfant" onclick="creerProfil('enfant')">
+                <span class="icon">👧🏽</span>
+                <span class="text">Enfant</span>
+            </button>
+            <button class="btn-profil adulte" onclick="creerProfil('adulte')">
+                <span class="icon">👩🏾</span>
+                <span class="text">Adulte</span>
+            </button>
+        </div>
+        <div id="liste-eleves" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </section>
 
-    <section id="scr-livres" class="card hidden" style="margin-top: 50px;">
-        <h2 style="color: var(--primary); margin-bottom: 20px;">Choisis un livre</h2>
+    <section id="scr-livres" class="card hidden" style="margin-top: 40px;">
+        <h2 style="color: var(--violet); margin-bottom: 20px;">Livre</h2>
         <div id="list-livres" class="grid-menu"></div>
     </section>
 
-    <section id="scr-chapitres" class="card hidden" style="margin-top: 50px;">
-        <h2 id="titre-livre" style="color: var(--primary); margin-bottom: 20px;">Livre</h2>
+    <section id="scr-chapitres" class="card hidden" style="margin-top: 40px;">
+        <h2 id="titre-livre" style="color: var(--violet); margin-bottom: 20px;">Livre</h2>
         <div id="list-chapitres" class="grid-menu" style="grid-template-columns: repeat(4, 1fr);"></div>
     </section>
 
-    <section id="scr-lecture" class="card hidden" style="margin-top: 50px;">
-        <h2 id="ref-label" style="color: var(--primary); margin-bottom: 15px;">Livre Chapitre:Verset</h2>
-        <p id="text-display" style="font-size: 1.5rem; line-height: 2; text-align: left; min-height: 150px;"></p>
-        <button id="btn-lire" class="btn-main" onclick="lireVersetEtSyllabes()" style="margin-top: 20px; background-color: var(--or, #FFD700); color: black;">
+    <section id="scr-lecture" class="card hidden" style="margin-top: 40px;">
+        <h2 id="ref-label" style="color: var(--violet); margin-bottom: 15px;">...</h2>
+        <p id="text-display" style="font-size: 1.5rem; line-height: 2; text-align: left;"></p>
+        <button id="btn-lire" class="btn-main" onclick="lireVersetEtSyllabes()" style="margin-top: 20px; background-color: var(--or); color: black;">
             ▶️ Écouter et Apprendre
         </button>
     </section>
 
-    <section id="scr-quiz" class="card hidden" style="margin-top: 50px;">
+    <section id="scr-quiz" class="card hidden" style="margin-top: 40px;">
         <h2>Trouve la première syllabe :</h2>
         <h1 id="word-hint" style="font-size: 3rem; margin: 20px 0;">...</h1>
         <div id="syllabes-choices" class="grid-menu" style="margin-top: 30px;"></div>
     </section>
 
-    <script src="script.js"></script>
-    
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').catch(() => {});
-        });
-      }
+        // 1. Tuer le cache fantôme (Service Worker)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let r of registrations) { r.unregister(); }
+            });
+        }
+
+        // 2. Capter l'erreur au lieu de la page blanche
+        window.onerror = function(msg, url, line) {
+            document.getElementById('erreur-ecran').classList.remove('hidden');
+            document.getElementById('erreur-ecran').innerHTML = `<h3>⚠️ Oups !</h3><p>Erreur: ${msg} (Ligne ${line})</p><button onclick="localStorage.clear(); window.location.reload();" style="margin-top:15px; padding:10px; background:var(--violet); color:white; border-radius:10px; border:none;">Réinitialiser l'application</button>`;
+            document.getElementById('accueil').classList.add('hidden');
+        };
+
+        // --- LOGIQUE DE L'APPLICATION ---
+        let bible = null;
+        let currentEleve = null;
+        let state = { stars: 0, words: [] };
+        let isPlaying = false;
+
+        let audioUnlocked = false;
+        function unlockAudio() {
+            if (audioUnlocked) return;
+            const u = new SpeechSynthesisUtterance('');
+            u.volume = 0; window.speechSynthesis.speak(u);
+            audioUnlocked = true;
+        }
+        document.addEventListener('click', unlockAudio, { once: true });
+
+        window.onload = async () => {
+            afficherEcran('accueil');
+            const res = await fetch('./segond_1910.json');
+            if (!res.ok) throw new Error("Impossible de lire segond_1910.json");
+            const rawData = await res.json();
+            
+            bible = {};
+            rawData.verses.forEach(v => {
+                if (!bible[v.book_name]) bible[v.book_name] = {};
+                if (!bible[v.book_name][v.chapter]) bible[v.book_name][v.chapter] = {};
+                bible[v.book_name][v.chapter][v.verse] = v.text;
+            });
+            renderEleves();
+        };
+
+        function afficherEcran(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            window.speechSynthesis.cancel();
+            isPlaying = false;
+        }
+
+        function creerProfil(type) {
+            const nom = prompt(type === 'enfant' ? "Prénom de l'enfant :" : "Prénom de l'adulte :");
+            if (!nom) return;
+            const data = { nom: nom, type: type, stars: 0, livre: "Genèse", chap: "1", ver: "1" };
+            localStorage.setItem('p_' + nom, JSON.stringify(data));
+            renderEleves();
+        }
+
+        function renderEleves() {
+            const div = document.getElementById('liste-eleves');
+            div.innerHTML = '';
+            Object.keys(localStorage).filter(k => k.startsWith('p_')).forEach(k => {
+                try {
+                    const p = JSON.parse(localStorage.getItem(k));
+                    const btn = document.createElement('button');
+                    btn.className = "btn-main";
+                    btn.innerHTML = p.type === 'adulte' ? `👩🏾👨🏽 ${p.nom}` : `👧🏽👦🏾 ${p.nom} (⭐ ${p.stars})`;
+                    btn.style.backgroundColor = p.type === 'adulte' ? "var(--violet)" : "var(--vert)";
+                    btn.onclick = () => { currentEleve = p; resumeSession(); };
+                    div.appendChild(btn);
+                } catch(e) { localStorage.removeItem(k); } // Nettoie les profils corrompus
+            });
+        }
+
+        function resumeSession() {
+            state.stars = currentEleve.stars || 0;
+            document.getElementById('user-name').innerText = currentEleve.nom;
+            document.getElementById('star-count').innerText = `⭐ ${state.stars}`;
+            
+            const div = document.getElementById('list-livres');
+            div.innerHTML = '';
+            Object.keys(bible).slice(0, 5).forEach(l => {
+                const b = document.createElement('button');
+                b.className = "btn-syl"; b.innerText = l;
+                b.onclick = () => showChap(l);
+                div.appendChild(b);
+            });
+            afficherEcran('scr-livres');
+        }
+
+        function showChap(l) {
+            currentEleve.livre = l;
+            document.getElementById('titre-livre').innerText = l;
+            const div = document.getElementById('list-chapitres');
+            div.innerHTML = '';
+            const total = Object.keys(bible[l]).length;
+            for(let i=1; i<=Math.min(total, 20); i++) {
+                const b = document.createElement('button');
+                b.className = "btn-syl"; b.innerText = i;
+                b.onclick = () => loadVerset(l, i.toString(), "1");
+                div.appendChild(b);
+            }
+            afficherEcran('scr-chapitres');
+        }
+
+        function loadVerset(l, c, v) {
+            currentEleve.livre = l; currentEleve.chap = c; currentEleve.ver = v;
+            localStorage.setItem('p_' + currentEleve.nom, JSON.stringify(currentEleve));
+            if(!bible[l] || !bible[l][c] || !bible[l][c][v]) return;
+            
+            const txt = bible[l][c][v];
+            state.words = txt.split(' ');
+            document.getElementById('text-display').innerText = txt;
+            document.getElementById('ref-label').innerText = `${l} ${c}:${v}`;
+            
+            document.getElementById('btn-lire').disabled = false;
+            document.getElementById('btn-lire').innerText = "▶️ Écouter et Apprendre";
+            afficherEcran('scr-lecture');
+        }
+
+        function direTexte(texte, rate) {
+            return new Promise(resolve => {
+                const u = new SpeechSynthesisUtterance(texte);
+                u.lang = 'fr-FR'; u.rate = rate;
+                let isResolved = false;
+                const timeout = setTimeout(() => { if(!isResolved){isResolved=true; resolve();} }, 3000);
+                u.onend = () => { if(!isResolved){isResolved=true; clearTimeout(timeout); resolve();} };
+                u.onerror = () => { if(!isResolved){isResolved=true; clearTimeout(timeout); resolve();} };
+                window.speechSynthesis.speak(u);
+            });
+        }
+        function pause(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+        async function lireVersetEtSyllabes() {
+            if (isPlaying) return;
+            isPlaying = true;
+            window.speechSynthesis.cancel();
+            
+            document.getElementById('btn-lire').disabled = true;
+            document.getElementById('btn-lire').innerText = "⏳ Lecture...";
+
+            const txt = bible[currentEleve.livre][currentEleve.chap][currentEleve.ver];
+            await direTexte(txt, 0.85);
+            await pause(600);
+            if (!isPlaying) return;
+
+            // Séquence Karaoké Enfant
+            if (currentEleve.type === 'enfant') {
+                const textDisplay = document.getElementById('text-display');
+                textDisplay.innerHTML = '';
+                let elementsSyllabes = [];
+
+                state.words.forEach(mot => {
+                    const spanMot = document.createElement('span');
+                    spanMot.style.marginRight = "6px";
+                    const lettres = mot.match(/[a-zA-Zâäàéèêëîïôöùûüç]+/);
+                    
+                    if (lettres) {
+                        const motPropre = lettres[0];
+                        if(mot.substring(0, lettres.index)) spanMot.appendChild(document.createTextNode(mot.substring(0, lettres.index)));
+
+                        const syllabes = couperEnSyllabes(motPropre);
+                        syllabes.forEach(syl => {
+                            const spanSyl = document.createElement('span');
+                            spanSyl.innerText = syl;
+                            spanSyl.style.transition = "background-color 0.2s";
+                            spanMot.appendChild(spanSyl);
+                            elementsSyllabes.push({ span: spanSyl, text: syl });
+                        });
+
+                        if(mot.substring(lettres.index + motPropre.length)) spanMot.appendChild(document.createTextNode(mot.substring(lettres.index + motPropre.length)));
+                    } else { spanMot.innerText = mot; }
+                    textDisplay.appendChild(spanMot);
+                });
+
+                for (let i = 0; i < elementsSyllabes.length; i++) {
+                    if (!isPlaying) break;
+                    const data = elementsSyllabes[i];
+                    data.span.classList.add('highlight-or');
+                    await direTexte(data.text, 0.7);
+                    await pause(100);
+                    data.span.classList.remove('highlight-or');
+                }
+                
+                if (!isPlaying) return;
+                isPlaying = false;
+                lancerJeu();
+            } else {
+                // Séquence Adulte : Pas de jeu
+                isPlaying = false;
+                document.getElementById('btn-lire').disabled = false;
+                document.getElementById('btn-lire').innerText = "▶️ Réécouter";
+            }
+        }
+
+        function couperEnSyllabes(mot) {
+            mot = mot.toLowerCase().replace(/[^a-zâäàéèêëîïôöùûüç-]/g, '');
+            if (mot.length <= 3) return [mot];
+            const voyelles = 'aâäàéèêëîïôöùûüçy';
+            let syllabes = [], syllabeActuelle = '';
+            for (let i = 0; i < mot.length; i++) {
+                syllabeActuelle += mot[i];
+                if (voyelles.includes(mot[i])) {
+                    let reste = mot.substring(i + 1);
+                    if (reste.length > 0 && !voyelles.includes(reste[0])) {
+                        syllabes.push(syllabeActuelle); syllabeActuelle = '';
+                    }
+                }
+            }
+            if (syllabeActuelle !== '') {
+                if (syllabes.length > 0) syllabes[syllabes.length - 1] += syllabeActuelle;
+                else syllabes.push(syllabeActuelle);
+            }
+            return syllabes.length > 0 ? syllabes : [mot];
+        }
+
+        function lancerJeu() {
+            const motsValides = state.words.filter(w => w.replace(/[^a-zA-Z]/g, '').length > 4);
+            const mot = (motsValides.length > 0 ? motsValides[Math.floor(Math.random() * motsValides.length)] : state.words[0]).replace(/[^a-zA-Zâäàéèêëîïôöùûüç]/g, '');
+            const syllabes = couperEnSyllabes(mot);
+            const bonneSyllabe = syllabes[0]; 
+            
+            document.getElementById('word-hint').innerText = `...${mot.substring(bonneSyllabe.length)}`;
+            
+            const fausses = ["par", "les", "ma", "ti", "bou", "cha", "ton", "vi", "lu", "re"];
+            let choices = [bonneSyllabe];
+            while (choices.length < 4) {
+                let f = fausses[Math.floor(Math.random() * fausses.length)];
+                if (!choices.includes(f)) choices.push(f);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            const div = document.getElementById('syllabes-choices');
+            div.innerHTML = '';
+            choices.forEach(s => {
+                const b = document.createElement('button');
+                b.className = "btn-syl"; b.innerText = s;
+                b.onclick = () => { 
+                    if(s === bonneSyllabe) { 
+                        b.classList.add('correct'); 
+                        state.stars += 20; 
+                        direTexte("Bravo !", 1);
+                        setTimeout(() => {
+                            currentEleve.stars = state.stars;
+                            localStorage.setItem('p_' + currentEleve.nom, JSON.stringify(currentEleve));
+                            document.getElementById('star-count').innerText = `⭐ ${state.stars}`;
+                            const nv = parseInt(currentEleve.ver) + 1;
+                            loadVerset(currentEleve.livre, currentEleve.chap, nv.toString());
+                        }, 1000);
+                    } else {
+                        b.style.backgroundColor = "red"; b.style.color = "white";
+                        direTexte("Essaie encore", 1);
+                    }
+                };
+                div.appendChild(b);
+            });
+            afficherEcran('scr-quiz');
+        }
     </script>
 </body>
 </html>
