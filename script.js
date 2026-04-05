@@ -1,9 +1,9 @@
 let bible = null;
 let currentEleve = null;
-let state = { stars: 0, motIdx: 0, words: [] };
+let state = { stars: 0, livre: "Genèse", chap: "1", ver: "1", words: [] };
+let isPlaying = false;
 
-// === DÉBLOCAGE AUDIO MOBILE ===
-// Nécessaire pour que Safari/Chrome sur téléphone autorise la synthèse vocale
+// === 1. DÉBLOCAGE AUDIO POUR TÉLÉPHONE ===
 let audioUnlocked = false;
 function unlockAudio() {
     if (audioUnlocked) return;
@@ -15,16 +15,15 @@ function unlockAudio() {
 document.addEventListener('click', unlockAudio, { once: true });
 document.addEventListener('touchstart', unlockAudio, { once: true });
 
-// CHARGEMENT
+// === 2. CHARGEMENT AU DÉMARRAGE ===
 window.onload = async () => {
-    console.log("Tentative de chargement de la Bible...");
+    afficherEcran('scr-accueil');
     try {
-        const res = await fetch('./segond_1910.json'); // Chemin relatif strict
+        const res = await fetch('./segond_1910.json'); 
         if (!res.ok) throw new Error("Fichier JSON introuvable");
         const rawData = await res.json();
         
-        // FORMATAGE DU JSON : Transformer le tableau de la Bible en objet hiérarchique {Livre: {Chapitre: {Verset: Texte}}}
-        // Cela répare le bug d'affichage de la liste des livres et chapitres
+        // Formatage pour naviguer facilement
         bible = {};
         rawData.verses.forEach(v => {
             if (!bible[v.book_name]) bible[v.book_name] = {};
@@ -32,18 +31,21 @@ window.onload = async () => {
             bible[v.book_name][v.chapter][v.verse] = v.text;
         });
 
-        console.log("Bible chargée et formatée avec succès !");
+        // Voix de bienvenue
+        setTimeout(() => direTexte("Bienvenue dans La Parole Apprivoisée.", 0.9), 500);
         renderEleves();
     } catch (e) {
-        console.error("ERREUR :", e.message);
-        alert("La Bible n'a pas pu être chargée. Vérifie que le fichier segond_1910.json est bien à côté de index.html");
+        alert("La Bible charge... Vérifiez que segond_1910.json est présent.");
     }
 };
 
-function openScreen(id) {
+// === 3. GESTION DES ÉCRANS ET UTILISATEURS ===
+function afficherEcran(id) {
     document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
     const target = document.getElementById(id);
     if(target) target.classList.remove('hidden');
+    window.speechSynthesis.cancel();
+    isPlaying = false;
 }
 
 function creerEleve() {
@@ -66,7 +68,6 @@ function renderEleves() {
         b.innerHTML = `👤 ${p.nom} (⭐ ${p.stars})`;
         b.onclick = () => { 
             currentEleve = p; 
-            console.log("Session chargée pour :", p.nom);
             resumeSession(); 
         };
         div.appendChild(b);
@@ -77,20 +78,18 @@ function resumeSession() {
     state.stars = currentEleve.stars || 0;
     updateUI();
     renderLivres();
-    openScreen('scr-livres');
 }
 
 function renderLivres() {
     const div = document.getElementById('list-livres');
-    if(!div || !bible) return;
     div.innerHTML = '';
-    Object.keys(bible).forEach(l => {
+    Object.keys(bible).slice(0, 5).forEach(l => { // Limité aux 5 premiers livres pour test
         const b = document.createElement('button');
-        b.className = "btn-syl"; 
-        b.innerText = l;
+        b.className = "btn-syl"; b.innerText = l;
         b.onclick = () => showChap(l);
         div.appendChild(b);
     });
+    afficherEcran('scr-livres');
 }
 
 function showChap(l) {
@@ -99,69 +98,133 @@ function showChap(l) {
     const div = document.getElementById('list-chapitres');
     div.innerHTML = '';
     const total = Object.keys(bible[l]).length;
-    for(let i=1; i<=total; i++) {
+    for(let i=1; i<=Math.min(total, 20); i++) { // Afficher max 20 chapitres
         const b = document.createElement('button');
         b.className = "btn-syl"; b.innerText = i;
         b.onclick = () => loadVerset(l, i.toString(), "1");
         div.appendChild(b);
     }
-    openScreen('scr-chapitres');
+    afficherEcran('scr-chapitres');
 }
 
 function loadVerset(l, c, v) {
     currentEleve.livre = l; currentEleve.chap = c; currentEleve.ver = v;
     save();
     
-    // Vérification de sécurité
     if(!bible[l] || !bible[l][c] || !bible[l][c][v]) { 
-        alert("Verset ou chapitre introuvable"); 
-        return; 
+        prochainVerset(); return; 
     }
     
     const txt = bible[l][c][v];
-    
     state.words = txt.split(' ');
-    document.getElementById('text-display').innerHTML = state.words.map((w,i) => `<span id="w-${i}">${w}</span>`).join(' ');
-    document.getElementById('ref-label').innerText = `${l} ${c}:${v}`;
-    updateUI();
-    openScreen('scr-lecture');
-    showStep(1);
-}
-
-function showStep(n) {
-    document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
-    const stepEl = document.getElementById(`step-${n}`);
-    if (stepEl) stepEl.classList.remove('hidden');
-}
-
-function lireVerset() {
-    window.speechSynthesis.cancel();
-    const txt = bible[currentEleve.livre][currentEleve.chap][currentEleve.ver];
-    const u = new SpeechSynthesisUtterance(txt);
-    u.lang = 'fr-FR'; 
-    u.rate = 0.8;
     
-    u.onboundary = (e) => {
-        if(e.name === 'word') {
-            document.querySelectorAll('.verset-box span').forEach(s => s.classList.remove('highlight'));
-            
-            // Correction du ciblage du mot pour l'illumination
-            let passedChars = 0;
-            for(let i=0; i<state.words.length; i++) {
-                if(passedChars <= e.charIndex && e.charIndex <= passedChars + state.words[i].length) {
-                    const target = document.getElementById(`w-${i}`);
-                    if(target) target.classList.add('highlight');
-                    break;
-                }
-                passedChars += state.words[i].length + 1; // +1 pour l'espace
-            }
-        }
-    };
-    u.onend = () => prepareJeu();
-    window.speechSynthesis.speak(u);
+    document.getElementById('text-display').innerText = txt;
+    document.getElementById('ref-label').innerText = `${l} ${c}:${v}`;
+    
+    document.getElementById('btn-lire').disabled = false;
+    document.getElementById('btn-lire').innerText = "▶️ Écouter et Apprendre";
+    
+    updateUI();
+    afficherEcran('scr-lecture');
 }
 
-// === ALGORITHME DE DÉCOUPE SYLLABIQUE RÉEL ===
+// === 4. LE MOTEUR VOCAL ET KARAOKÉ ===
+function direTexte(texte, rate) {
+    return new Promise(resolve => {
+        const u = new SpeechSynthesisUtterance(texte);
+        u.lang = 'fr-FR';
+        u.rate = rate;
+        
+        let isResolved = false;
+        const timeout = setTimeout(() => {
+            if (!isResolved) { isResolved = true; resolve(); }
+        }, Math.max(2000, texte.length * 150));
+        
+        u.onend = () => { if(!isResolved){ isResolved=true; clearTimeout(timeout); resolve(); } };
+        u.onerror = () => { if(!isResolved){ isResolved=true; clearTimeout(timeout); resolve(); } };
+        
+        window.speechSynthesis.speak(u);
+    });
+}
+
+function pause(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+async function lireVersetEtSyllabes() {
+    if (isPlaying) return;
+    isPlaying = true;
+    window.speechSynthesis.cancel();
+    
+    const btn = document.getElementById('btn-lire');
+    btn.disabled = true;
+    btn.innerText = "⏳ Lecture en cours...";
+
+    const texteComplet = bible[currentEleve.livre][currentEleve.chap][currentEleve.ver];
+    
+    // ÉTAPE A : Lire la phrase normalement
+    await direTexte(texteComplet, 0.85);
+    await pause(600);
+
+    if (!isPlaying) return;
+
+    // ÉTAPE B : Préparer l'affichage syllabique
+    const textDisplay = document.getElementById('text-display');
+    textDisplay.innerHTML = '';
+    let elementsSyllabes = [];
+
+    state.words.forEach(mot => {
+        const spanMot = document.createElement('span');
+        spanMot.style.marginRight = "6px";
+        spanMot.style.display = "inline-block";
+
+        const lettres = mot.match(/[a-zA-Zâäàéèêëîïôöùûüç]+/);
+        if (lettres) {
+            const motPropre = lettres[0];
+            const debut = mot.substring(0, lettres.index);
+            const fin = mot.substring(lettres.index + motPropre.length);
+            
+            if(debut) spanMot.appendChild(document.createTextNode(debut));
+
+            const syllabes = couperEnSyllabes(motPropre);
+            syllabes.forEach(syl => {
+                const spanSyl = document.createElement('span');
+                spanSyl.innerText = syl;
+                spanSyl.style.transition = "background-color 0.2s, color 0.2s";
+                spanSyl.style.padding = "2px";
+                spanSyl.style.borderRadius = "4px";
+                spanMot.appendChild(spanSyl);
+                elementsSyllabes.push({ span: spanSyl, text: syl });
+            });
+
+            if(fin) spanMot.appendChild(document.createTextNode(fin));
+        } else {
+            spanMot.innerText = mot;
+        }
+        textDisplay.appendChild(spanMot);
+    });
+
+    // ÉTAPE C : Allumer et lire syllabe par syllabe
+    for (let i = 0; i < elementsSyllabes.length; i++) {
+        if (!isPlaying) break;
+        const data = elementsSyllabes[i];
+        
+        data.span.style.backgroundColor = "var(--or, #FFD700)";
+        data.span.style.color = "black";
+        
+        await direTexte(data.text, 0.7); // Vitesse lente pour la syllabe
+        await pause(100);
+        
+        data.span.style.backgroundColor = "transparent";
+        data.span.style.color = "var(--texte)";
+    }
+
+    if (!isPlaying) return;
+
+    // ÉTAPE D : Lancer le jeu
+    isPlaying = false;
+    lancerJeu();
+}
+
+// === 5. ALGORITHME DE DÉCOUPE ===
 function couperEnSyllabes(mot) {
     mot = mot.toLowerCase().replace(/[^a-zâäàéèêëîïôöùûüç-]/g, '');
     if (mot.length <= 3) return [mot];
@@ -185,24 +248,21 @@ function couperEnSyllabes(mot) {
     return syllabes.length > 0 ? syllabes : [mot];
 }
 
-function prepareJeu() {
-    // Sélectionner un mot pertinent du texte pour l'exercice
-    const motsValides = state.words.filter(w => w.replace(/[^a-zA-Zâäàéèêëîïôöùûüç]/g, '').length > 4);
+// === 6. LE JEU FINAL ===
+function lancerJeu() {
+    const motsValides = state.words.filter(w => w.replace(/[^a-zA-Z]/g, '').length > 4);
     const motBrut = motsValides.length > 0 ? motsValides[Math.floor(Math.random() * motsValides.length)] : state.words[0];
     const mot = motBrut.replace(/[^a-zA-Zâäàéèêëîïôöùûüç]/g, '');
     
-    showStep(2);
-    
     const syllabes = couperEnSyllabes(mot);
-    const syl = syllabes[0]; // La vraie première syllabe française
+    const bonneSyllabe = syllabes[0]; 
     
-    document.getElementById('word-hint').innerText = `...${mot.substring(syl.length)}`;
+    document.getElementById('word-hint').innerText = `...${mot.substring(bonneSyllabe.length)}`;
     
-    const faussesSyllabes = ["par", "les", "ma", "ti", "bou", "cha", "ton", "vi", "lu", "re"];
-    let choices = [syl];
-    
-    while (choices.length < 3) {
-        let f = faussesSyllabes[Math.floor(Math.random() * faussesSyllabes.length)];
+    const fausses = ["par", "les", "ma", "ti", "bou", "cha", "ton", "vi", "lu", "re"];
+    let choices = [bonneSyllabe];
+    while (choices.length < 4) {
+        let f = fausses[Math.floor(Math.random() * fausses.length)];
         if (!choices.includes(f)) choices.push(f);
     }
     choices.sort(() => Math.random() - 0.5);
@@ -213,34 +273,27 @@ function prepareJeu() {
         const b = document.createElement('button');
         b.className = "btn-syl"; b.innerText = s;
         b.onclick = () => { 
-            if(s === syl) { 
+            if(s === bonneSyllabe) { 
                 b.classList.add('correct'); 
                 state.stars += 20; 
-                
-                // Félicitations vocales
-                const winMsg = new SpeechSynthesisUtterance("Bravo !");
-                winMsg.lang = "fr-FR";
-                window.speechSynthesis.speak(winMsg);
-                
-                setTimeout(finish, 1000);
+                direTexte("Bravo !", 1);
+                setTimeout(() => {
+                    save(); updateUI(); prochainVerset();
+                }, 1000);
             } else {
-                b.style.backgroundColor = "red";
-                b.style.color = "white";
-                
-                const errMsg = new SpeechSynthesisUtterance("Essaie encore");
-                errMsg.lang = "fr-FR";
-                window.speechSynthesis.speak(errMsg);
+                b.style.backgroundColor = "red"; b.style.color = "white";
+                direTexte("Essaie encore", 1);
             }
         };
         div.appendChild(b);
     });
+    
+    afficherEcran('scr-quiz');
 }
 
-function finish() { save(); updateUI(); showStep(3); }
-
 function prochainVerset() {
-    const vInt = parseInt(currentEleve.ver) + 1;
-    loadVerset(currentEleve.livre, currentEleve.chap, vInt.toString());
+    const nv = parseInt(currentEleve.ver) + 1;
+    loadVerset(currentEleve.livre, currentEleve.chap, nv.toString());
 }
 
 function save() {
@@ -251,11 +304,4 @@ function save() {
 function updateUI() {
     document.getElementById('user-name').innerText = currentEleve ? currentEleve.nom : "Invité";
     document.getElementById('star-count').innerText = `⭐ ${state.stars}`;
-    
-    // Remplissage sécurisé de la barre de progression
-    if(currentEleve && bible && bible[currentEleve.livre] && bible[currentEleve.livre][currentEleve.chap]) {
-        const total = Object.keys(bible[currentEleve.livre][currentEleve.chap]).length;
-        const progress = (parseInt(currentEleve.ver) / total * 100);
-        document.getElementById('progress-bar-inner').style.width = progress + "%";
-    }
 }
